@@ -552,37 +552,19 @@ function getStarStyle(index: number) {
     padding: 20px 16px;
     gap: 24px;
     max-width: 100%;
+    justify-content: center;
   }
 
   .login-form-container {
-    width: 100%;
-    max-width: 100%;
+    width: 90%;
+    max-width: 95%;
     padding: 40px 24px;
     order: 1;
+    margin: 0 auto;
   }
 
   .showcase-container {
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-    order: 2;
-  }
-
-  .feature-card {
-    padding: 24px;
-    height: auto;
-    min-height: 200px;
-  }
-
-  .card-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 16px;
-  }
-
-  .card-icon svg {
-    width: 24px;
-    height: 24px;
+    display: none;
   }
 
   .glow-orb {
@@ -618,18 +600,6 @@ function getStarStyle(index: number) {
   .subtitle {
     font-size: 14px;
   }
-
-  .feature-card {
-    padding: 30px;
-  }
-
-  .card-title {
-    font-size: 20px;
-  }
-
-  .card-description {
-    font-size: 14px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -654,23 +624,6 @@ function getStarStyle(index: number) {
   .login-button {
     height: 48px;
     font-size: 15px;
-  }
-
-  .feature-card {
-    padding: 24px 20px;
-  }
-
-  .card-icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .card-title {
-    font-size: 18px;
-  }
-
-  .card-description {
-    font-size: 13px;
   }
 }
 
