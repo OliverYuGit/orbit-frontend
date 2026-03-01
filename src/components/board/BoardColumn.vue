@@ -32,7 +32,7 @@
     </template>
     <n-scrollbar style="max-height: calc(100vh - 260px);">
       <div 
-        style="display: flex; flex-direction: column; gap: 8px; padding: 4px 0; min-height: 100px;"
+        style="display: flex; flex-direction: column; gap: 16px; padding: 4px 0; min-height: 100px;"
       >
         <TaskCard
           v-for="task in tasks"

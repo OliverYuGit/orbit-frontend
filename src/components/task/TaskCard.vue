@@ -130,12 +130,15 @@ function handleDragEnd() {
   transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
               opacity 0.2s ease,
               box-shadow 0.2s ease;
+  transform-origin: center bottom;
 }
 
 .task-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   background: rgba(255, 255, 255, 0.1) !important;
+  z-index: 10;
+  position: relative;
 }
 
 .task-card.is-dragging {

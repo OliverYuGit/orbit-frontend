@@ -20,7 +20,7 @@
       <div class="activity-header">
         <div class="live-badge">
           <div class="live-indicator" />
-          <span>LIVE</span>
+          <span>Live Activity</span>
         </div>
         <n-button text class="toggle-button" @click="isCollapsed = true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { NButton } from 'naive-ui'
 import { useTaskStore } from '@/stores/tasks'
 
@@ -158,8 +158,8 @@ taskStore.$subscribe(() => {
   gap: 20px;
   height: fit-content;
   position: sticky;
-  top: 16px;
-  max-height: calc(100vh - 100px);
+  top: 0;
+  max-height: 100vh;
 }
 
 .live-activity.collapsed {
