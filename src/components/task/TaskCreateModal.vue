@@ -1,5 +1,5 @@
 <template>
-  <n-modal v-model:show="show" preset="card" title="New Task" style="width: 480px;" :style="{ '--n-color': 'rgba(255, 255, 255, 0.98)', '--n-color-modal': 'rgba(255, 255, 255, 0.98)' }">
+  <n-modal v-model:show="show" preset="card" title="New Task" style="width: 480px;" :style="{ '--n-color': 'rgba(30, 35, 50, 0.95)', '--n-color-modal': 'rgba(30, 35, 50, 0.95)' }">
     <n-form :model="form" @submit.prevent="handleSubmit">
       <n-form-item label="Title" required>
         <n-input v-model:value="form.title" placeholder="Task title" />
