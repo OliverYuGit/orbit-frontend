@@ -1,126 +1,116 @@
 <template>
-  <div class="login-container">
-    <!-- Background decorations -->
-    <div class="background-decorations">
-      <div class="gradient-orb orb-1"></div>
-      <div class="gradient-orb orb-2"></div>
-      <div class="gradient-orb orb-3"></div>
-      <div class="geometric-shape shape-1"></div>
-      <div class="geometric-shape shape-2"></div>
-      <div class="geometric-shape shape-3"></div>
+  <div class="login-page">
+    <!-- Background Layer -->
+    <div class="background-layer">
+      <!-- Overlay -->
+      <div class="overlay"></div>
+      
+      <!-- Glow Orbs -->
+      <div class="glow-orb glow-1"></div>
+      <div class="glow-orb glow-2"></div>
+      <div class="glow-orb glow-3"></div>
+      
+      <!-- Geometric Decorations -->
+      <div class="circle-decoration"></div>
+      <div class="square-decoration"></div>
+      
+      <!-- Stars -->
+      <div v-for="i in 25" :key="i" class="star" :style="getStarStyle(i)"></div>
     </div>
-    
-    <!-- Semi-transparent overlay -->
-    <div class="content-overlay"></div>
-    
-    <!-- Left Panel: Login Form -->
-    <div class="login-panel">
-      <div class="login-form">
-        <div class="form-header">
-          <h1 class="welcome-title">Welcome back</h1>
-          <p class="welcome-subtitle">Please Enter your Account details</p>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+      <!-- Left: Login Form -->
+      <div class="login-form-container">
+        <!-- Logo -->
+        <div class="logo">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="20" fill="url(#logo-gradient)" />
+            <path d="M24 14L30 24L24 34L18 24L24 14Z" fill="white" opacity="0.9" />
+            <defs>
+              <linearGradient id="logo-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#667eea" />
+                <stop offset="1" stop-color="#764ba2" />
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
 
-        <n-form ref="formRef" :model="form" :rules="rules" @submit.prevent="handleLogin">
-          <n-form-item path="email" :show-label="false">
-            <n-input
-              v-model:value="form.email"
-              placeholder="Email"
-              size="large"
-              type="email"
-              :input-props="{ autocomplete: 'email' }"
-              class="dark-input"
-            />
-          </n-form-item>
+        <!-- Title -->
+        <h1 class="title">Welcome back</h1>
+        <p class="subtitle">Sign in to continue to Orbit</p>
 
-          <n-form-item path="password" :show-label="false">
-            <n-input
-              v-model:value="form.password"
-              type="password"
-              placeholder="Password"
-              size="large"
-              show-password-on="click"
-              :input-props="{ autocomplete: 'current-password' }"
-              class="dark-input"
-            />
-          </n-form-item>
+        <!-- Form -->
+        <n-form ref="formRef" :model="form" :rules="rules" :show-label="false" @submit.prevent="handleLogin">
+          <div class="input-group">
+            <label class="input-label">Email</label>
+            <n-form-item path="email">
+              <input
+                v-model="form.email"
+                type="email"
+                class="input-field"
+                placeholder="you@orbit.local"
+              />
+            </n-form-item>
+          </div>
 
-          <div class="form-options">
-            <n-checkbox v-model:checked="form.keepLoggedIn" class="keep-logged-in">
-              Keep me logged in
-            </n-checkbox>
-            <a href="#" class="forgot-password" @click.prevent="handleForgotPassword">
-              Forgot Password
-            </a>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <n-form-item path="password">
+              <input
+                v-model="form.password"
+                type="password"
+                class="input-field"
+                placeholder="Enter your password"
+              />
+            </n-form-item>
           </div>
 
           <n-alert v-if="error" type="error" class="error-alert">
             {{ error }}
           </n-alert>
 
-          <n-button
-            type="primary"
-            size="large"
-            block
-            attr-type="submit"
-            :loading="loading"
-            class="signin-button"
-          >
-            Sign in
-          </n-button>
+          <button type="submit" class="login-button" :disabled="loading">
+            {{ loading ? 'Signing in...' : 'Sign in' }}
+          </button>
         </n-form>
+
+        <!-- Footer Links -->
+        <div class="footer-links">
+          Don't have an account? <a href="#">Sign up</a>
+        </div>
       </div>
-    </div>
 
-    <!-- Right Panel: Showcase -->
-    <div class="showcase-panel">
-      <div class="showcase-content">
-        <!-- Starburst effect -->
-        <div class="starburst-container">
-          <div class="starburst"></div>
-          <div class="starburst-glow"></div>
+      <!-- Right: Showcase -->
+      <div class="showcase-container">
+        <!-- Feature Card 1 -->
+        <div class="feature-card">
+          <div class="card-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11L12 14L22 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Mission Control</h3>
+          <p class="card-description">
+            Organize your tasks with powerful boards. Track progress from backlog to completion with intuitive drag-and-drop workflows.
+          </p>
         </div>
 
-        <!-- Testimonial Card -->
-        <div class="testimonial-card">
-          <h3 class="testimonial-title">What's our Jobseekers Said</h3>
-          <div class="testimonial-content">
-            <div class="stars">
-              <span v-for="i in 5" :key="i" class="star">★</span>
-            </div>
-            <p class="testimonial-text">
-              "This platform completely transformed my job search experience. 
-              The interface is intuitive and the opportunities are exactly what I was looking for."
-            </p>
-            <div class="testimonial-author">
-              <div class="author-avatar">
-                <img src="https://i.pravatar.cc/150?img=12" alt="User" />
-              </div>
-              <div class="author-info">
-                <div class="author-name">Sarah Johnson</div>
-                <div class="author-role">Software Engineer</div>
-              </div>
-            </div>
+        <!-- Feature Card 2 -->
+        <div class="feature-card">
+          <div class="card-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="9" cy="7" r="4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-        </div>
-
-        <!-- Bottom Info Card -->
-        <div class="info-card">
-          <div class="info-content">
-            <h4 class="info-title">Get your right job with Orbit</h4>
-            <p class="info-description">
-              Join thousands of professionals who found their dream careers through our platform
-            </p>
-          </div>
-          <div class="info-avatars">
-            <div class="avatar-stack">
-              <img src="https://i.pravatar.cc/150?img=1" alt="User 1" />
-              <img src="https://i.pravatar.cc/150?img=2" alt="User 2" />
-              <img src="https://i.pravatar.cc/150?img=3" alt="User 3" />
-              <img src="https://i.pravatar.cc/150?img=4" alt="User 4" />
-            </div>
-            <span class="avatar-count">+2.5k users</span>
-          </div>
+          <h3 class="card-title">Team Collaboration</h3>
+          <p class="card-description">
+            Work together seamlessly. Assign tasks, leave comments, and track activity in real-time with your entire team.
+          </p>
         </div>
       </div>
     </div>
@@ -130,7 +120,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { NForm, NFormItem, NInput, NButton, NAlert, NCheckbox, type FormInst, type FormRules } from 'naive-ui'
+import { NForm, NFormItem, NAlert, type FormInst, type FormRules } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -140,8 +130,7 @@ const loading = ref(false)
 const error = ref('')
 const form = ref({
   email: '',
-  password: '',
-  keepLoggedIn: false
+  password: ''
 })
 
 const rules: FormRules = {
@@ -161,7 +150,6 @@ async function handleLogin() {
     await formRef.value?.validate()
     loading.value = true
     
-    // Use email as username for now
     await auth.login(form.value.email, form.value.password)
     router.push('/app/board')
   } catch (err: any) {
@@ -175,115 +163,346 @@ async function handleLogin() {
   }
 }
 
-function handleForgotPassword() {
-  // TODO: Implement forgot password flow
-  console.log('Forgot password clicked')
+// Generate random star positions
+function getStarStyle(index: number) {
+  const positions = [
+    { top: '10%', left: '15%', delay: '0s' },
+    { top: '20%', left: '85%', delay: '0.5s' },
+    { top: '15%', left: '45%', delay: '1s' },
+    { top: '25%', left: '65%', delay: '1.5s' },
+    { top: '35%', left: '25%', delay: '2s' },
+    { top: '40%', left: '75%', delay: '2.5s' },
+    { top: '45%', left: '50%', delay: '0.3s' },
+    { top: '55%', left: '30%', delay: '0.8s' },
+    { top: '60%', left: '80%', delay: '1.3s' },
+    { top: '65%', left: '10%', delay: '1.8s' },
+    { top: '70%', left: '60%', delay: '2.3s' },
+    { top: '75%', left: '40%', delay: '0.6s' },
+    { top: '80%', left: '70%', delay: '1.1s' },
+    { top: '85%', left: '20%', delay: '1.6s' },
+    { top: '90%', left: '90%', delay: '2.1s' },
+    { top: '12%', left: '55%', delay: '0.4s' },
+    { top: '28%', left: '35%', delay: '0.9s' },
+    { top: '38%', left: '88%', delay: '1.4s' },
+    { top: '48%', left: '18%', delay: '1.9s' },
+    { top: '58%', left: '68%', delay: '2.4s' },
+    { top: '68%', left: '48%', delay: '0.7s' },
+    { top: '78%', left: '78%', delay: '1.2s' },
+    { top: '88%', left: '38%', delay: '1.7s' },
+    { top: '18%', left: '28%', delay: '2.2s' },
+    { top: '32%', left: '92%', delay: '0.2s' }
+  ]
+  
+  const pos = positions[index - 1] || positions[0]
+  return {
+    top: pos.top,
+    left: pos.left,
+    animationDelay: pos.delay
+  }
 }
 </script>
 
 <style scoped>
-.login-container {
+/* Main Container */
+.login-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   background: linear-gradient(135deg, #2D3561 0%, #1A1F3A 100%);
-  position: relative;
-  overflow: hidden;
 }
 
-/* Background Decorations */
-.background-decorations {
+/* Background Layer */
+.background-layer {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 0;
-  overflow: hidden;
 }
 
-.gradient-orb {
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* Glow Orbs */
+.glow-orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.6;
-  animation: float 20s ease-in-out infinite;
+  animation: float 8s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.orb-1 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(99, 102, 241, 0.3) 50%, transparent 100%);
-  top: -150px;
-  left: -150px;
-  animation-delay: 0s;
-}
-
-.orb-2 {
+.glow-1 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.5) 0%, rgba(219, 39, 119, 0.3) 50%, transparent 100%);
-  bottom: -100px;
-  right: 10%;
-  animation-delay: -7s;
+  top: -100px;
+  left: -100px;
+  background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
 }
 
-.orb-3 {
+.glow-2 {
+  width: 500px;
+  height: 500px;
+  bottom: -150px;
+  right: -150px;
+  background: radial-gradient(circle, rgba(65, 105, 225, 0.25) 0%, transparent 70%);
+  animation-delay: -3s;
+}
+
+.glow-3 {
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, rgba(37, 99, 235, 0.3) 50%, transparent 100%);
-  top: 40%;
-  right: -100px;
-  animation-delay: -14s;
+  top: 50%;
+  right: 20%;
+  transform: translateY(-50%);
+  background: radial-gradient(circle, rgba(255, 105, 180, 0.2) 0%, transparent 70%);
+  animation-delay: -6s;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -30px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-}
-
-.geometric-shape {
+/* Geometric Decorations */
+.circle-decoration {
   position: absolute;
-  border: 2px solid rgba(139, 92, 246, 0.2);
-  animation: rotate-shape 30s linear infinite;
-}
-
-.shape-1 {
   width: 200px;
   height: 200px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
   top: 15%;
-  left: 20%;
-  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-  animation-duration: 25s;
+  right: 10%;
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
 }
 
-.shape-2 {
-  width: 150px;
-  height: 150px;
+.square-decoration {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  transform: rotate(45deg);
   bottom: 20%;
   left: 15%;
-  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-  animation-duration: 35s;
-  animation-direction: reverse;
+  animation: float 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.shape-3 {
-  width: 180px;
-  height: 180px;
-  top: 50%;
-  right: 25%;
-  border-radius: 41% 59% 41% 59% / 41% 59% 41% 59%;
-  animation-duration: 40s;
-  border-color: rgba(236, 72, 153, 0.2);
+/* Stars */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  animation: twinkle 3s ease-in-out infinite;
+  pointer-events: none;
 }
 
-@keyframes rotate-shape {
+/* Content Wrapper */
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 80px;
+  max-width: 1200px;
+  width: 100%;
+  padding: 40px;
+}
+
+/* Login Form Container */
+.login-form-container {
+  width: 480px;
+  padding: 60px 50px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Logo */
+.logo {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 32px;
+}
+
+/* Title */
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 12px 0;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 40px 0;
+}
+
+/* Input Group */
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.input-field {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #FFFFFF;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: rgba(138, 43, 226, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.1);
+}
+
+.input-field::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Error Alert */
+.error-alert {
+  margin-bottom: 24px;
+  border-radius: 12px;
+}
+
+/* Login Button */
+.login-button {
+  width: 100%;
+  height: 52px;
+  margin-top: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  font-family: inherit;
+}
+
+.login-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5);
+}
+
+.login-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Footer Links */
+.footer-links {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-links a {
+  color: rgba(138, 43, 226, 0.9);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #FFFFFF;
+}
+
+/* Showcase Container */
+.showcase-container {
+  width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 60px 0;
+}
+
+/* Feature Card */
+.feature-card {
+  height: 280px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Content */
+.card-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+.card-description {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+@keyframes rotate {
   from {
     transform: rotate(0deg);
   }
@@ -292,454 +511,83 @@ function handleForgotPassword() {
   }
 }
 
-/* Semi-transparent Overlay */
-.content-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Left Panel - Login Form */
-.login-panel {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  position: relative;
-  z-index: 2;
-}
-
-.login-form {
-  width: 100%;
-  max-width: 460px;
-}
-
-.form-header {
-  margin-bottom: 48px;
-}
-
-.welcome-title {
-  font-size: 48px;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin: 0 0 12px 0;
-  letter-spacing: -1px;
-}
-
-.welcome-subtitle {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
-  font-weight: 400;
-}
-
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.keep-logged-in {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.forgot-password {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-.forgot-password:hover {
-  color: #FFFFFF;
-}
-
-.error-alert {
-  margin-bottom: 24px;
-  border-radius: 12px;
-}
-
-.signin-button {
-  height: 56px;
-  border-radius: 16px;
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: 0.3px;
-}
-
-/* Right Panel - Showcase */
-.showcase-panel {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  padding: 60px;
-}
-
-.showcase-content {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-}
-
-/* Starburst Effect */
-.starburst-container {
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.starburst {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: 
-    linear-gradient(0deg, transparent 49%, rgba(139, 92, 246, 0.4) 50%, transparent 51%),
-    linear-gradient(30deg, transparent 49%, rgba(99, 102, 241, 0.3) 50%, transparent 51%),
-    linear-gradient(60deg, transparent 49%, rgba(139, 92, 246, 0.4) 50%, transparent 51%),
-    linear-gradient(90deg, transparent 49%, rgba(99, 102, 241, 0.3) 50%, transparent 51%),
-    linear-gradient(120deg, transparent 49%, rgba(139, 92, 246, 0.4) 50%, transparent 51%),
-    linear-gradient(150deg, transparent 49%, rgba(99, 102, 241, 0.3) 50%, transparent 51%);
-  animation: rotate-starburst 30s linear infinite;
-}
-
-.starburst-glow {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(99, 102, 241, 0.3) 30%, transparent 70%);
-  filter: blur(60px);
-  animation: pulse-glow 4s ease-in-out infinite;
-}
-
-@keyframes rotate-starburst {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { 
-    opacity: 0.5;
-    transform: translate(-50%, -50%) scale(1);
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
   }
-  50% { 
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(1.1);
+  50% {
+    opacity: 1;
   }
 }
 
-/* Testimonial Card */
-.testimonial-card {
-  position: relative;
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 48px;
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-.testimonial-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin: 0 0 24px 0;
-}
-
-.testimonial-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.stars {
-  display: flex;
-  gap: 4px;
-}
-
-.star {
-  color: #FCD34D;
-  font-size: 20px;
-}
-
-.testimonial-text {
-  font-size: 15px;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0;
-}
-
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.author-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.author-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.author-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.author-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #FFFFFF;
-}
-
-.author-role {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Info Card */
-.info-card {
-  position: relative;
-  z-index: 2;
-  background: #FFFFFF;
-  border-radius: 24px;
-  padding: 40px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.info-content {
-  flex: 1;
-}
-
-.info-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1A1F3A;
-  margin: 0 0 8px 0;
-}
-
-.info-description {
-  font-size: 14px;
-  color: rgba(26, 31, 58, 0.7);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.info-avatars {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.avatar-stack {
-  display: flex;
-  margin-right: -8px;
-}
-
-.avatar-stack img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 3px solid #FFFFFF;
-  margin-right: -12px;
-  object-fit: cover;
-}
-
-.avatar-count {
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(26, 31, 58, 0.7);
-}
-
-/* Naive UI Overrides */
-:deep(.n-input.dark-input) {
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-}
-
-:deep(.n-input.dark-input:hover) {
-  background: rgba(0, 0, 0, 0.5);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-:deep(.n-input.dark-input.n-input--focus) {
-  background: rgba(0, 0, 0, 0.5);
-  border-color: rgba(139, 92, 246, 0.5);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-}
-
-:deep(.n-input__input) {
-  color: #FFFFFF;
-  font-size: 15px;
-}
-
-:deep(.n-input__input::placeholder) {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-:deep(.n-button--primary-type) {
-  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
-  border: none;
-}
-
-:deep(.n-button--primary-type:hover) {
-  background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%);
-}
-
-:deep(.n-button--primary-type:active) {
-  background: linear-gradient(135deg, #BE185D 0%, #9F1239 100%);
-}
-
-:deep(.n-form-item) {
-  margin-bottom: 24px;
-}
-
-:deep(.n-checkbox) {
-  --n-text-color: rgba(255, 255, 255, 0.8);
-}
-
-:deep(.n-checkbox:hover) {
-  --n-text-color: #FFFFFF;
-}
-
-/* Mobile Responsive */
-@media (max-width: 1200px) {
-  .login-container {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-wrapper {
     flex-direction: column;
+    padding: 40px 20px;
+    gap: 40px;
+  }
+  
+  .login-form-container,
+  .showcase-container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  
+  .feature-card {
+    height: auto;
+    min-height: 240px;
   }
 
-  .login-panel {
-    order: 1;
-    padding: 40px 32px;
-  }
-
-  .showcase-panel {
-    order: 2;
-    padding: 40px 32px;
-    min-height: 600px;
-  }
-
-  .showcase-content {
-    max-width: 100%;
+  .circle-decoration,
+  .square-decoration {
+    display: none;
   }
 }
 
-@media (max-width: 768px) {
-  .login-panel {
-    padding: 32px 24px;
+@media (max-width: 640px) {
+  .login-form-container {
+    padding: 40px 30px;
   }
 
-  .showcase-panel {
-    padding: 32px 24px;
-    min-height: 500px;
+  .title {
+    font-size: 28px;
   }
 
-  .welcome-title {
-    font-size: 36px;
-  }
-
-  .welcome-subtitle {
+  .subtitle {
     font-size: 14px;
   }
 
-  .testimonial-card {
-    padding: 32px 24px;
+  .feature-card {
+    padding: 30px;
   }
 
-  .testimonial-title {
+  .card-title {
     font-size: 20px;
   }
 
-  .info-card {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px;
-  }
-
-  .info-avatars {
-    align-items: flex-start;
-  }
-
-  .starburst-container {
-    width: 350px;
-    height: 350px;
+  .card-description {
+    font-size: 14px;
   }
 }
 
-@media (max-width: 480px) {
-  .login-panel {
-    padding: 24px 20px;
-  }
+/* Override Naive UI form item styles */
+:deep(.n-form-item) {
+  margin-bottom: 0;
+}
 
-  .showcase-panel {
-    padding: 24px 20px;
-    min-height: 450px;
-  }
+:deep(.n-form-item-blank) {
+  min-height: auto;
+}
 
-  .welcome-title {
-    font-size: 32px;
-  }
+:deep(.n-form-item-feedback-wrapper) {
+  min-height: 24px;
+  padding-top: 4px;
+}
 
-  .form-options {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .testimonial-card {
-    padding: 24px 20px;
-  }
-
-  .info-card {
-    padding: 20px;
-  }
-
-  .starburst-container {
-    width: 250px;
-    height: 250px;
-  }
+:deep(.n-form-item-feedback__line) {
+  color: rgba(255, 100, 100, 0.9);
+  font-size: 13px;
 }
 </style>
