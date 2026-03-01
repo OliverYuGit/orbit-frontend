@@ -2,26 +2,22 @@
   <div class="login-container">
     <!-- Left Panel: Login Form -->
     <div class="login-panel">
-      <div class="login-card">
-        <div class="login-header">
-          <h1 class="logo">Orbit</h1>
-          <p class="subtitle">Mission Control System</p>
+      <div class="login-form">
+        <div class="form-header">
+          <h1 class="welcome-title">Welcome back</h1>
+          <p class="welcome-subtitle">Please Enter your Account details</p>
         </div>
 
         <n-form ref="formRef" :model="form" :rules="rules" @submit.prevent="handleLogin">
-          <n-form-item path="username" :show-label="false">
+          <n-form-item path="email" :show-label="false">
             <n-input
-              v-model:value="form.username"
-              placeholder="Username"
+              v-model:value="form.email"
+              placeholder="Email"
               size="large"
-              :input-props="{ autocomplete: 'username' }"
-            >
-              <template #prefix>
-                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-              </template>
-            </n-input>
+              type="email"
+              :input-props="{ autocomplete: 'email' }"
+              class="dark-input"
+            />
           </n-form-item>
 
           <n-form-item path="password" :show-label="false">
@@ -32,14 +28,18 @@
               size="large"
               show-password-on="click"
               :input-props="{ autocomplete: 'current-password' }"
-            >
-              <template #prefix>
-                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                </svg>
-              </template>
-            </n-input>
+              class="dark-input"
+            />
           </n-form-item>
+
+          <div class="form-options">
+            <n-checkbox v-model:checked="form.keepLoggedIn" class="keep-logged-in">
+              Keep me logged in
+            </n-checkbox>
+            <a href="#" class="forgot-password" @click.prevent="handleForgotPassword">
+              Forgot Password
+            </a>
+          </div>
 
           <n-alert v-if="error" type="error" class="error-alert">
             {{ error }}
@@ -51,45 +51,63 @@
             block
             attr-type="submit"
             :loading="loading"
-            class="login-button"
+            class="signin-button"
           >
-            Login
+            Sign in
           </n-button>
         </n-form>
       </div>
     </div>
 
-    <!-- Right Panel: Brand Showcase -->
+    <!-- Right Panel: Showcase -->
     <div class="showcase-panel">
       <div class="showcase-content">
-        <!-- Central starburst effect -->
+        <!-- Starburst effect -->
         <div class="starburst-container">
           <div class="starburst"></div>
           <div class="starburst-glow"></div>
         </div>
 
-        <!-- Floating orbs -->
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-
-        <!-- Light rays -->
-        <div class="light-ray ray-1"></div>
-        <div class="light-ray ray-2"></div>
-        <div class="light-ray ray-3"></div>
-        <div class="light-ray ray-4"></div>
-
-        <!-- Brand text -->
-        <div class="brand-text">
-          <h2 class="brand-title">Welcome to Orbit</h2>
-          <p class="brand-description">
-            Your mission control center for seamless operations and real-time insights.
-          </p>
+        <!-- Testimonial Card -->
+        <div class="testimonial-card">
+          <h3 class="testimonial-title">What's our Jobseekers Said</h3>
+          <div class="testimonial-content">
+            <div class="stars">
+              <span v-for="i in 5" :key="i" class="star">★</span>
+            </div>
+            <p class="testimonial-text">
+              "This platform completely transformed my job search experience. 
+              The interface is intuitive and the opportunities are exactly what I was looking for."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <img src="https://i.pravatar.cc/150?img=12" alt="User" />
+              </div>
+              <div class="author-info">
+                <div class="author-name">Sarah Johnson</div>
+                <div class="author-role">Software Engineer</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Decorative particles -->
-        <div class="particles">
-          <div class="particle" v-for="i in 20" :key="i" :style="getParticleStyle(i)"></div>
+        <!-- Bottom Info Card -->
+        <div class="info-card">
+          <div class="info-content">
+            <h4 class="info-title">Get your right job with Orbit</h4>
+            <p class="info-description">
+              Join thousands of professionals who found their dream careers through our platform
+            </p>
+          </div>
+          <div class="info-avatars">
+            <div class="avatar-stack">
+              <img src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+              <img src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+              <img src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+              <img src="https://i.pravatar.cc/150?img=4" alt="User 4" />
+            </div>
+            <span class="avatar-count">+2.5k users</span>
+          </div>
         </div>
       </div>
     </div>
@@ -99,7 +117,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { NForm, NFormItem, NInput, NButton, NAlert, type FormInst, type FormRules } from 'naive-ui'
+import { NForm, NFormItem, NInput, NButton, NAlert, NCheckbox, type FormInst, type FormRules } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -108,13 +126,15 @@ const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
 const error = ref('')
 const form = ref({
-  username: '',
-  password: ''
+  email: '',
+  password: '',
+  keepLoggedIn: false
 })
 
 const rules: FormRules = {
-  username: [
-    { required: true, message: 'Please enter your username', trigger: 'blur' }
+  email: [
+    { required: true, message: 'Please enter your email', trigger: 'blur' },
+    { type: 'email', message: 'Please enter a valid email', trigger: 'blur' }
   ],
   password: [
     { required: true, message: 'Please enter your password', trigger: 'blur' }
@@ -128,7 +148,8 @@ async function handleLogin() {
     await formRef.value?.validate()
     loading.value = true
     
-    await auth.login(form.value.username, form.value.password)
+    // Use email as username for now
+    await auth.login(form.value.email, form.value.password)
     router.push('/app/board')
   } catch (err: any) {
     if (err?.message) {
@@ -141,21 +162,9 @@ async function handleLogin() {
   }
 }
 
-// Generate random particle positions
-function getParticleStyle(index: number) {
-  const angle = (index / 20) * 360
-  const distance = 150 + Math.random() * 100
-  const x = Math.cos(angle * Math.PI / 180) * distance
-  const y = Math.sin(angle * Math.PI / 180) * distance
-  const delay = Math.random() * 3
-  const duration = 2 + Math.random() * 2
-  
-  return {
-    left: `calc(50% + ${x}px)`,
-    top: `calc(50% + ${y}px)`,
-    animationDelay: `${delay}s`,
-    animationDuration: `${duration}s`
-  }
+function handleForgotPassword() {
+  // TODO: Implement forgot password flow
+  console.log('Forgot password clicked')
 }
 </script>
 
@@ -174,74 +183,66 @@ function getParticleStyle(index: number) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 60px;
   position: relative;
   z-index: 2;
 }
 
-.login-card {
+.login-form {
   width: 100%;
-  max-width: 440px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 56px 48px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  max-width: 460px;
 }
 
-.login-card:hover {
-  box-shadow: 
-    0 12px 48px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transform: translateY(-4px);
-}
-
-.login-header {
-  text-align: center;
+.form-header {
   margin-bottom: 48px;
 }
 
-.logo {
-  font-size: 42px;
+.welcome-title {
+  font-size: 48px;
   font-weight: 700;
   color: #FFFFFF;
   margin: 0 0 12px 0;
   letter-spacing: -1px;
-  background: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.8) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
-.subtitle {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.65);
+.welcome-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
   margin: 0;
-  font-weight: 500;
-  letter-spacing: 0.3px;
+  font-weight: 400;
 }
 
-.input-icon {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.5);
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.keep-logged-in {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.forgot-password {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+  color: #FFFFFF;
 }
 
 .error-alert {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border-radius: 12px;
 }
 
-.login-button {
-  margin-top: 12px;
-  border-radius: 14px;
+.signin-button {
+  height: 56px;
+  border-radius: 16px;
   font-weight: 600;
-  height: 52px;
   font-size: 16px;
   letter-spacing: 0.3px;
 }
@@ -254,25 +255,31 @@ function getParticleStyle(index: number) {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  padding: 60px;
 }
 
 .showcase-content {
   position: relative;
   width: 100%;
+  max-width: 600px;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 32px;
 }
 
 /* Starburst Effect */
 .starburst-container {
   position: absolute;
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .starburst {
@@ -280,212 +287,206 @@ function getParticleStyle(index: number) {
   width: 100%;
   height: 100%;
   background: 
-    linear-gradient(0deg, transparent 48%, rgba(99, 179, 237, 0.8) 50%, transparent 52%),
-    linear-gradient(45deg, transparent 48%, rgba(99, 179, 237, 0.6) 50%, transparent 52%),
-    linear-gradient(90deg, transparent 48%, rgba(99, 179, 237, 0.8) 50%, transparent 52%),
-    linear-gradient(135deg, transparent 48%, rgba(99, 179, 237, 0.6) 50%, transparent 52%);
-  animation: rotate 20s linear infinite;
+    linear-gradient(0deg, transparent 49%, rgba(139, 92, 246, 0.4) 50%, transparent 51%),
+    linear-gradient(30deg, transparent 49%, rgba(99, 102, 241, 0.3) 50%, transparent 51%),
+    linear-gradient(60deg, transparent 49%, rgba(139, 92, 246, 0.4) 50%, transparent 51%),
+    linear-gradient(90deg, transparent 49%, rgba(99, 102, 241, 0.3) 50%, transparent 51%),
+    linear-gradient(120deg, transparent 49%, rgba(139, 92, 246, 0.4) 50%, transparent 51%),
+    linear-gradient(150deg, transparent 49%, rgba(99, 102, 241, 0.3) 50%, transparent 51%);
+  animation: rotate-starburst 30s linear infinite;
 }
 
 .starburst-glow {
   position: absolute;
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(99, 179, 237, 0.6) 0%, rgba(99, 179, 237, 0.3) 30%, transparent 70%);
-  filter: blur(40px);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(99, 102, 241, 0.3) 30%, transparent 70%);
+  filter: blur(60px);
   animation: pulse-glow 4s ease-in-out infinite;
 }
 
-@keyframes rotate {
+@keyframes rotate-starburst {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
 @keyframes pulse-glow {
   0%, 100% { 
-    opacity: 0.6;
+    opacity: 0.5;
     transform: translate(-50%, -50%) scale(1);
   }
   50% { 
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
 
-/* Floating Orbs */
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(99, 179, 237, 0.8), rgba(59, 130, 246, 0.4));
-  box-shadow: 
-    0 0 60px rgba(99, 179, 237, 0.6),
-    inset 0 0 20px rgba(255, 255, 255, 0.3);
-  animation: float-orb 8s ease-in-out infinite;
-}
-
-.orb-1 {
-  width: 120px;
-  height: 120px;
-  top: 15%;
-  left: 20%;
-  animation-delay: 0s;
-}
-
-.orb-2 {
-  width: 80px;
-  height: 80px;
-  top: 60%;
-  right: 25%;
-  animation-delay: 2s;
-  background: radial-gradient(circle at 30% 30%, rgba(147, 51, 234, 0.8), rgba(99, 102, 241, 0.4));
-  box-shadow: 
-    0 0 50px rgba(147, 51, 234, 0.6),
-    inset 0 0 20px rgba(255, 255, 255, 0.3);
-}
-
-.orb-3 {
-  width: 60px;
-  height: 60px;
-  bottom: 20%;
-  left: 30%;
-  animation-delay: 4s;
-}
-
-@keyframes float-orb {
-  0%, 100% {
-    transform: translateY(0) translateX(0);
-  }
-  25% {
-    transform: translateY(-30px) translateX(20px);
-  }
-  50% {
-    transform: translateY(-10px) translateX(-20px);
-  }
-  75% {
-    transform: translateY(-40px) translateX(10px);
-  }
-}
-
-/* Light Rays */
-.light-ray {
-  position: absolute;
-  width: 2px;
-  height: 200px;
-  background: linear-gradient(to bottom, transparent, rgba(99, 179, 237, 0.6), transparent);
-  top: 50%;
-  left: 50%;
-  transform-origin: top center;
-  opacity: 0.4;
-  animation: ray-rotate 15s linear infinite;
-}
-
-.ray-1 {
-  transform: translate(-50%, -50%) rotate(0deg);
-  animation-delay: 0s;
-}
-
-.ray-2 {
-  transform: translate(-50%, -50%) rotate(45deg);
-  animation-delay: 1s;
-}
-
-.ray-3 {
-  transform: translate(-50%, -50%) rotate(90deg);
-  animation-delay: 2s;
-}
-
-.ray-4 {
-  transform: translate(-50%, -50%) rotate(135deg);
-  animation-delay: 3s;
-}
-
-@keyframes ray-rotate {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-/* Brand Text */
-.brand-text {
+/* Testimonial Card */
+.testimonial-card {
   position: relative;
-  z-index: 10;
-  text-align: center;
-  max-width: 500px;
-  padding: 0 40px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.brand-title {
-  font-size: 48px;
+.testimonial-title {
+  font-size: 24px;
   font-weight: 700;
   color: #FFFFFF;
   margin: 0 0 24px 0;
-  letter-spacing: -1px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.brand-description {
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.6;
+.testimonial-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  color: #FCD34D;
+  font-size: 20px;
+}
+
+.testimonial-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
-  font-weight: 400;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Particles */
-.particles {
-  position: absolute;
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.author-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.author-avatar img {
   width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
+  object-fit: cover;
 }
 
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: rgba(99, 179, 237, 0.8);
+.author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.author-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.author-role {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Info Card */
+.info-card {
+  position: relative;
+  z-index: 2;
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1A1F3A;
+  margin: 0 0 8px 0;
+}
+
+.info-description {
+  font-size: 14px;
+  color: rgba(26, 31, 58, 0.7);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.info-avatars {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.avatar-stack {
+  display: flex;
+  margin-right: -8px;
+}
+
+.avatar-stack img {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(99, 179, 237, 0.8);
-  animation: particle-float 3s ease-in-out infinite;
+  border: 3px solid #FFFFFF;
+  margin-right: -12px;
+  object-fit: cover;
 }
 
-@keyframes particle-float {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1);
-  }
+.avatar-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(26, 31, 58, 0.7);
 }
 
 /* Naive UI Overrides */
-:deep(.n-input) {
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+:deep(.n-input.dark-input) {
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
 }
 
-:deep(.n-input:hover) {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.2);
+:deep(.n-input.dark-input:hover) {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-:deep(.n-input.n-input--focus) {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #63B3ED;
-  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.15);
+:deep(.n-input.dark-input.n-input--focus) {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
 }
 
 :deep(.n-input__input) {
   color: #FFFFFF;
+  font-size: 15px;
 }
 
 :deep(.n-input__input::placeholder) {
@@ -493,103 +494,125 @@ function getParticleStyle(index: number) {
 }
 
 :deep(.n-button--primary-type) {
-  background: linear-gradient(135deg, #63B3ED 0%, #4299E1 100%);
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
   border: none;
 }
 
 :deep(.n-button--primary-type:hover) {
-  background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
+  background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%);
 }
 
 :deep(.n-button--primary-type:active) {
-  background: linear-gradient(135deg, #3182CE 0%, #2C5282 100%);
+  background: linear-gradient(135deg, #BE185D 0%, #9F1239 100%);
 }
 
 :deep(.n-form-item) {
   margin-bottom: 24px;
 }
 
-:deep(.n-form-item-feedback-wrapper) {
-  color: rgba(255, 255, 255, 0.7);
+:deep(.n-checkbox) {
+  --n-text-color: rgba(255, 255, 255, 0.8);
+}
+
+:deep(.n-checkbox:hover) {
+  --n-text-color: #FFFFFF;
 }
 
 /* Mobile Responsive */
-@media (max-width: 968px) {
+@media (max-width: 1200px) {
   .login-container {
     flex-direction: column;
   }
 
   .login-panel {
-    order: 2;
-    padding: 32px 20px;
+    order: 1;
+    padding: 40px 32px;
   }
 
   .showcase-panel {
-    order: 1;
-    min-height: 300px;
-    flex: 0 0 300px;
+    order: 2;
+    padding: 40px 32px;
+    min-height: 600px;
   }
 
-  .login-card {
-    padding: 40px 32px;
+  .showcase-content {
     max-width: 100%;
   }
+}
 
-  .logo {
+@media (max-width: 768px) {
+  .login-panel {
+    padding: 32px 24px;
+  }
+
+  .showcase-panel {
+    padding: 32px 24px;
+    min-height: 500px;
+  }
+
+  .welcome-title {
     font-size: 36px;
   }
 
-  .subtitle {
+  .welcome-subtitle {
     font-size: 14px;
   }
 
-  .brand-title {
-    font-size: 36px;
+  .testimonial-card {
+    padding: 32px 24px;
   }
 
-  .brand-description {
-    font-size: 16px;
+  .testimonial-title {
+    font-size: 20px;
+  }
+
+  .info-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+  }
+
+  .info-avatars {
+    align-items: flex-start;
   }
 
   .starburst-container {
-    width: 300px;
-    height: 300px;
-  }
-
-  .orb {
-    display: none;
-  }
-
-  .light-ray {
-    height: 150px;
+    width: 350px;
+    height: 350px;
   }
 }
 
 @media (max-width: 480px) {
+  .login-panel {
+    padding: 24px 20px;
+  }
+
   .showcase-panel {
-    min-height: 250px;
-    flex: 0 0 250px;
+    padding: 24px 20px;
+    min-height: 450px;
   }
 
-  .login-card {
-    padding: 32px 24px;
-  }
-
-  .logo {
+  .welcome-title {
     font-size: 32px;
   }
 
-  .brand-title {
-    font-size: 28px;
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
-  .brand-description {
-    font-size: 14px;
+  .testimonial-card {
+    padding: 24px 20px;
+  }
+
+  .info-card {
+    padding: 20px;
   }
 
   .starburst-container {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
   }
 }
 </style>
