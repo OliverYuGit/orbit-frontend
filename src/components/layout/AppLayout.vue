@@ -255,11 +255,7 @@ onMounted(() => {
   margin: 4px 12px;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
-}
-
-:deep(.n-menu-item:hover) {
-  background: var(--card-bg-hover);
-  color: var(--text-primary);
+  background: transparent;
 }
 
 :deep(.n-menu-item.n-menu-item--selected) {
@@ -270,6 +266,13 @@ onMounted(() => {
 
 :deep(.n-menu-item-content) {
   padding: 12px 16px;
+  transition: all 0.2s ease;
+}
+
+:deep(.n-menu-item:not(.n-menu-item--selected):hover .n-menu-item-content) {
+  background: var(--card-bg-hover);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
 }
 
 :deep(.n-menu-item-content__icon) {
