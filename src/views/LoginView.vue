@@ -1,5 +1,33 @@
 <template>
   <div class="login-container">
+    <!-- Background decorative elements -->
+    <div class="background-decoration">
+      <!-- Stars -->
+      <div class="stars"></div>
+      <div class="stars-small"></div>
+      
+      <!-- Shooting stars -->
+      <div class="shooting-star" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+      <div class="shooting-star" style="top: 40%; left: 60%; animation-delay: 3s;"></div>
+      <div class="shooting-star" style="top: 70%; left: 30%; animation-delay: 6s;"></div>
+      
+      <!-- Geometric shapes -->
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+      
+      <!-- Gradient glows -->
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+      
+      <!-- Floating lines -->
+      <svg class="floating-lines" xmlns="http://www.w3.org/2000/svg">
+        <line class="line line-1" x1="0" y1="0" x2="200" y2="200" />
+        <line class="line line-2" x1="100%" y1="0" x2="80%" y2="100%" />
+        <line class="line line-3" x1="50%" y1="100%" x2="50%" y2="0" />
+      </svg>
+    </div>
+
     <div class="login-card">
       <div class="login-header">
         <h1 class="logo">Orbit</h1>
@@ -112,8 +140,203 @@ async function handleLogin() {
   justify-content: center;
   background: linear-gradient(135deg, #2D3561 0%, #1A1F3A 100%);
   padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Background Decoration Layer */
+.background-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Stars */
+.stars,
+.stars-small {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(2px 2px at 90% 60%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 33% 80%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 15% 90%, rgba(255, 255, 255, 0.7), transparent);
+  background-size: 200% 200%;
+  animation: twinkle 8s ease-in-out infinite;
+}
+
+.stars-small {
+  background-image: 
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 40% 40%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 25% 75%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 85% 85%, rgba(255, 255, 255, 0.4), transparent);
+  animation: twinkle 6s ease-in-out infinite reverse;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Shooting Stars */
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 4px 2px rgba(255, 255, 255, 0.8);
+  animation: shoot 9s linear infinite;
+  opacity: 0;
+}
+
+@keyframes shoot {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    transform: translateX(200px) translateY(200px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(200px) translateY(200px);
+    opacity: 0;
+  }
+}
+
+/* Geometric Circles */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(108, 99, 255, 0.15);
+  animation: float 20s ease-in-out infinite;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -50px;
+  left: -50px;
+  animation-delay: 3s;
+  border-color: rgba(147, 51, 234, 0.15);
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 10%;
+  animation-delay: 6s;
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+  }
+}
+
+/* Gradient Glows */
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: pulse 8s ease-in-out infinite;
+}
+
+.glow-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #6C63FF 0%, transparent 70%);
+  top: -200px;
+  left: -200px;
+  animation-delay: 0s;
+}
+
+.glow-2 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #9333EA 0%, transparent 70%);
+  bottom: -150px;
+  right: -150px;
+  animation-delay: 4s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.1);
+  }
+}
+
+/* Floating Lines */
+.floating-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.line {
+  stroke: rgba(108, 99, 255, 0.2);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 5, 10;
+  animation: dash 20s linear infinite;
+}
+
+.line-1 {
+  animation-delay: 0s;
+}
+
+.line-2 {
+  animation-delay: 3s;
+  stroke: rgba(147, 51, 234, 0.2);
+}
+
+.line-3 {
+  animation-delay: 6s;
+  stroke: rgba(59, 130, 246, 0.2);
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* Login Card - ensure it's above background */
 .login-card {
   width: 100%;
   max-width: 420px;
@@ -125,6 +348,8 @@ async function handleLogin() {
   padding: 48px 40px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .login-card:hover {
@@ -232,6 +457,15 @@ async function handleLogin() {
 
   .subtitle {
     font-size: 13px;
+  }
+
+  /* Reduce background effects on mobile for performance */
+  .glow {
+    display: none;
+  }
+
+  .circle {
+    animation-duration: 30s;
   }
 }
 </style>
