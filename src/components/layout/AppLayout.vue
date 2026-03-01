@@ -4,6 +4,15 @@
       <n-layout class="app-layout">
         <n-layout-header class="app-header">
           <div class="header-left">
+            <n-button 
+              text 
+              class="menu-button" 
+              @click="showMobileSidebar = true"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </n-button>
             <div class="logo">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="24" cy="24" r="20" fill="url(#logo-gradient)" />
@@ -24,12 +33,15 @@
                 <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>{{ auth.user?.displayName ?? auth.user?.username ?? 'User' }}</span>
+              <span class="user-name">{{ auth.user?.displayName ?? auth.user?.username ?? 'User' }}</span>
             </n-button>
           </n-dropdown>
         </n-layout-header>
         <n-layout has-sider class="app-body">
-          <n-layout-sider class="app-sider" :width="240">
+          <n-layout-sider 
+            class="app-sider desktop-sider" 
+            :width="240"
+          >
             <n-menu 
               :options="menuOptions" 
               :value="activeKey" 
@@ -37,6 +49,21 @@
               :indent="20"
             />
           </n-layout-sider>
+          <n-drawer
+            v-model:show="showMobileSidebar"
+            :width="280"
+            placement="left"
+            class="mobile-drawer"
+          >
+            <n-drawer-content title="Menu" :native-scrollbar="false">
+              <n-menu 
+                :options="menuOptions" 
+                :value="activeKey" 
+                @update:value="handleMobileNav"
+                :indent="20"
+              />
+            </n-drawer-content>
+          </n-drawer>
           <n-layout-content class="app-content">
             <router-view />
           </n-layout-content>
@@ -47,17 +74,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, h } from 'vue'
+import { computed, onMounted, ref, h } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   NConfigProvider, NLayout, NLayoutHeader, NLayoutSider, NLayoutContent,
-  NMenu, NButton, NDropdown, NMessageProvider, darkTheme
+  NMenu, NButton, NDropdown, NMessageProvider, NDrawer, NDrawerContent, darkTheme
 } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
+
+const showMobileSidebar = ref(false)
 
 const activeKey = computed(() => route.path.split('/')[2] ?? 'dashboard')
 
@@ -116,6 +145,11 @@ function handleNav(key: string) {
   router.push(`/app/${key}`)
 }
 
+function handleMobileNav(key: string) {
+  showMobileSidebar.value = false
+  router.push(`/app/${key}`)
+}
+
 function handleUserMenu(key: string) {
   if (key === 'logout') {
     auth.logout()
@@ -140,15 +174,23 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(45, 53, 97, 0.95) 0%, rgba(26, 31, 58, 0.95) 100%);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.menu-button {
+  display: none;
+  color: var(--text-primary);
+  padding: 8px;
+  margin-right: 4px;
 }
 
 .logo {
@@ -171,6 +213,10 @@ onMounted(() => {
   font-weight: 500;
 }
 
+.user-name {
+  display: inline;
+}
+
 .app-body {
   height: calc(100vh - 64px);
 }
@@ -181,9 +227,36 @@ onMounted(() => {
   padding: 16px 0;
 }
 
+.desktop-sider {
+  display: block;
+}
+
 .app-content {
   background: transparent;
   overflow: auto;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 16px;
+  }
+
+  .menu-button {
+    display: flex;
+  }
+
+  .desktop-sider {
+    display: none;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .app-name {
+    font-size: 18px;
+  }
 }
 
 /* Override Naive UI Menu styles */
@@ -230,5 +303,20 @@ onMounted(() => {
 
 :deep(.n-dropdown-option:hover) {
   background: var(--card-bg-hover);
+}
+
+/* Override Naive UI Drawer styles for mobile menu */
+:deep(.n-drawer) {
+  background: linear-gradient(135deg, rgba(45, 53, 97, 0.98) 0%, rgba(26, 31, 58, 0.98) 100%);
+  backdrop-filter: blur(20px);
+}
+
+:deep(.n-drawer-header) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+:deep(.n-drawer-body-content-wrapper) {
+  padding: 16px 0;
 }
 </style>
