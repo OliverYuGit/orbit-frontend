@@ -1,5 +1,18 @@
 <template>
   <div class="login-container">
+    <!-- Background decorations -->
+    <div class="background-decorations">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+      <div class="geometric-shape shape-1"></div>
+      <div class="geometric-shape shape-2"></div>
+      <div class="geometric-shape shape-3"></div>
+    </div>
+    
+    <!-- Semi-transparent overlay -->
+    <div class="content-overlay"></div>
+    
     <!-- Left Panel: Login Form -->
     <div class="login-panel">
       <div class="login-form">
@@ -177,6 +190,120 @@ function handleForgotPassword() {
   overflow: hidden;
 }
 
+/* Background Decorations */
+.background-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: float 20s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(99, 102, 241, 0.3) 50%, transparent 100%);
+  top: -150px;
+  left: -150px;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.5) 0%, rgba(219, 39, 119, 0.3) 50%, transparent 100%);
+  bottom: -100px;
+  right: 10%;
+  animation-delay: -7s;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, rgba(37, 99, 235, 0.3) 50%, transparent 100%);
+  top: 40%;
+  right: -100px;
+  animation-delay: -14s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.geometric-shape {
+  position: absolute;
+  border: 2px solid rgba(139, 92, 246, 0.2);
+  animation: rotate-shape 30s linear infinite;
+}
+
+.shape-1 {
+  width: 200px;
+  height: 200px;
+  top: 15%;
+  left: 20%;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  animation-duration: 25s;
+}
+
+.shape-2 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 15%;
+  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+  animation-duration: 35s;
+  animation-direction: reverse;
+}
+
+.shape-3 {
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  right: 25%;
+  border-radius: 41% 59% 41% 59% / 41% 59% 41% 59%;
+  animation-duration: 40s;
+  border-color: rgba(236, 72, 153, 0.2);
+}
+
+@keyframes rotate-shape {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Semi-transparent Overlay */
+.content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* Left Panel - Login Form */
 .login-panel {
   flex: 1;
@@ -267,7 +394,7 @@ function handleForgotPassword() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 40px;
 }
 
 /* Starburst Effect */
@@ -332,7 +459,7 @@ function handleForgotPassword() {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
-  padding: 40px;
+  padding: 48px;
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -411,7 +538,7 @@ function handleForgotPassword() {
   z-index: 2;
   background: #FFFFFF;
   border-radius: 24px;
-  padding: 32px;
+  padding: 40px;
   width: 100%;
   display: flex;
   justify-content: space-between;
