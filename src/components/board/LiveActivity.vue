@@ -6,13 +6,7 @@
         <div class="live-indicator-wrapper">
           <div class="live-indicator" />
         </div>
-        <div class="collapsed-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </div>
-        <div class="collapsed-stat">{{ todayCompleted }}</div>
+        <div class="collapsed-stat">{{ activities.length }}</div>
         <n-button text class="toggle-button" @click="isCollapsed = false">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -35,50 +29,19 @@
         </n-button>
       </div>
 
-      <div class="current-task">
-        <div class="section-label">Current Task</div>
-        <div v-if="currentTask" class="task-info">
-          <div class="task-title">{{ currentTask.title }}</div>
-          <div class="task-meta">
-            <span class="priority-badge" :class="`priority-${currentTask.priority.toLowerCase()}`">
-              {{ currentTask.priority }}
-            </span>
-          </div>
+      <div class="activity-list">
+        <div v-if="activities.length === 0" class="no-activity">
+          No recent activity
         </div>
-        <div v-else class="no-task">
-          No active task
-        </div>
-      </div>
-
-      <div class="timer-section">
-        <div class="timer-display">{{ formattedTime }}</div>
-        <n-space justify="center" :size="12">
-          <n-button 
-            :type="isRunning ? 'warning' : 'primary'"
-            @click="toggleTimer"
-            style="border-radius: 8px;"
-          >
-            {{ isRunning ? 'Pause' : 'Start' }}
-          </n-button>
-          <n-button 
-            @click="resetTimer"
-            style="border-radius: 8px;"
-          >
-            Reset
-          </n-button>
-        </n-space>
-      </div>
-
-      <div class="stats-section">
-        <div class="section-label">Today's Stats</div>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-label">Completed</div>
-            <div class="stat-value">{{ todayCompleted }}/{{ todayTotal }}</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-label">Focus Time</div>
-            <div class="stat-value">{{ focusTimeFormatted }}</div>
+        <div 
+          v-for="activity in activities" 
+          :key="activity.id"
+          class="activity-item"
+        >
+          <div class="activity-dot"></div>
+          <div class="activity-content">
+            <div class="activity-time">{{ formatTime(activity.timestamp) }}</div>
+            <div class="activity-text">{{ activity.message }}</div>
           </div>
         </div>
       </div>
@@ -88,105 +51,96 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { NButton, NSpace } from 'naive-ui'
+import { NButton } from 'naive-ui'
 import { useTaskStore } from '@/stores/tasks'
-import type { Task } from '@/types'
+
+interface Activity {
+  id: number
+  timestamp: Date
+  message: string
+}
 
 const taskStore = useTaskStore()
 const isCollapsed = ref(false)
-const isRunning = ref(false)
-const timeInSeconds = ref(25 * 60) // 25 minutes default
-const focusTimeInSeconds = ref(0)
-let timerInterval: ReturnType<typeof setInterval> | null = null
+const activities = ref<Activity[]>([])
+let activityCheckInterval: ReturnType<typeof setInterval> | null = null
 
-const currentTask = computed<Task | undefined>(() => {
-  return taskStore.tasks.find(t => t.status === 'DOING')
-})
-
-const todayCompleted = computed(() => {
-  const today = new Date().toDateString()
-  return taskStore.tasks.filter(t => 
-    t.status === 'DONE' && 
-    new Date(t.updatedAt).toDateString() === today
-  ).length
-})
-
-const todayTotal = computed(() => {
-  return taskStore.tasks.length
-})
-
-const formattedTime = computed(() => {
-  const minutes = Math.floor(timeInSeconds.value / 60)
-  const seconds = timeInSeconds.value % 60
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-})
-
-const focusTimeFormatted = computed(() => {
-  const hours = Math.floor(focusTimeInSeconds.value / 3600)
-  const minutes = Math.floor((focusTimeInSeconds.value % 3600) / 60)
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`
-  }
-  return `${minutes}m`
-})
-
-function toggleTimer() {
-  if (isRunning.value) {
-    pauseTimer()
-  } else {
-    startTimer()
-  }
-}
-
-function startTimer() {
-  if (!currentTask.value) {
-    return
-  }
-  isRunning.value = true
-  timerInterval = setInterval(() => {
-    if (timeInSeconds.value > 0) {
-      timeInSeconds.value--
-      focusTimeInSeconds.value++
+// Generate activity logs from task changes
+function generateActivities(): Activity[] {
+  const logs: Activity[] = []
+  const tasks = taskStore.tasks
+  
+  // Sort tasks by updatedAt
+  const sortedTasks = [...tasks].sort((a, b) => 
+    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  )
+  
+  // Take the most recent 10 tasks
+  sortedTasks.slice(0, 10).forEach((task, index) => {
+    const timestamp = new Date(task.updatedAt)
+    let message = ''
+    
+    if (task.status === 'DONE') {
+      message = `Task "${task.title}" completed`
+    } else if (task.status === 'DOING') {
+      message = `Task "${task.title}" moved to Doing`
+    } else if (task.status === 'TODO') {
+      message = `Task "${task.title}" moved to Todo`
     } else {
-      pauseTimer()
-      // Timer completed - could add notification here
+      message = `Task "${task.title}" created`
     }
-  }, 1000)
+    
+    logs.push({
+      id: task.id * 100 + index,
+      timestamp,
+      message
+    })
+  })
+  
+  return logs
 }
 
-function pauseTimer() {
-  isRunning.value = false
-  if (timerInterval) {
-    clearInterval(timerInterval)
-    timerInterval = null
+function formatTime(timestamp: Date): string {
+  const now = new Date()
+  const diff = now.getTime() - timestamp.getTime()
+  const seconds = Math.floor(diff / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+  
+  if (seconds < 60) {
+    return 'just now'
+  } else if (minutes < 60) {
+    return `${minutes}m ago`
+  } else if (hours < 24) {
+    return `${hours}h ago`
+  } else if (days < 7) {
+    return `${days}d ago`
+  } else {
+    return timestamp.toLocaleDateString()
   }
 }
 
-function resetTimer() {
-  pauseTimer()
-  timeInSeconds.value = 25 * 60
+function updateActivities() {
+  activities.value = generateActivities()
 }
 
 onMounted(() => {
-  // Load focus time from localStorage
-  const savedFocusTime = localStorage.getItem('orbit-focus-time')
-  if (savedFocusTime) {
-    const data = JSON.parse(savedFocusTime)
-    const today = new Date().toDateString()
-    if (data.date === today) {
-      focusTimeInSeconds.value = data.seconds
-    }
-  }
+  updateActivities()
+  // Update activities every 30 seconds
+  activityCheckInterval = setInterval(updateActivities, 30000)
 })
 
 onUnmounted(() => {
-  pauseTimer()
-  // Save focus time to localStorage
-  const today = new Date().toDateString()
-  localStorage.setItem('orbit-focus-time', JSON.stringify({
-    date: today,
-    seconds: focusTimeInSeconds.value
-  }))
+  if (activityCheckInterval) {
+    clearInterval(activityCheckInterval)
+    activityCheckInterval = null
+  }
+})
+
+// Watch for task store changes
+taskStore.$subscribe(() => {
+  updateActivities()
 })
 </script>
 
@@ -205,6 +159,7 @@ onUnmounted(() => {
   height: fit-content;
   position: sticky;
   top: 16px;
+  max-height: calc(100vh - 100px);
 }
 
 .live-activity.collapsed {
@@ -273,125 +228,81 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.section-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
-}
-
-.current-task {
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.task-info {
+.activity-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  padding-right: 4px;
 }
 
-.task-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.4;
+.activity-list::-webkit-scrollbar {
+  width: 4px;
 }
 
-.task-meta {
-  display: flex;
-  gap: 8px;
+.activity-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
 }
 
-.priority-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
+.activity-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
-.priority-badge.priority-p0 {
-  background: rgba(255, 107, 157, 0.2);
-  color: #FF6B9D;
+.activity-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.priority-badge.priority-p1 {
-  background: rgba(255, 217, 61, 0.2);
-  color: #FFD93D;
-}
-
-.priority-badge.priority-p2 {
-  background: rgba(78, 205, 196, 0.2);
-  color: #4ECDC4;
-}
-
-.no-task {
+.no-activity {
   font-size: 13px;
   color: var(--text-tertiary);
   font-style: italic;
-}
-
-.timer-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.timer-display {
-  font-size: 48px;
-  font-weight: 700;
   text-align: center;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -1px;
+  padding: 20px 0;
 }
 
-.stats-section {
-  padding: 16px;
+.activity-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 12px;
   background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+.activity-item:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.activity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ECDC4;
+  margin-top: 6px;
+  flex-shrink: 0;
 }
 
-.stat-label {
+.activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-time {
   font-size: 11px;
   color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
-.stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.collapsed-icon {
+.activity-text {
+  font-size: 13px;
   color: var(--text-secondary);
-  display: flex;
-  justify-content: center;
+  line-height: 1.4;
+  word-wrap: break-word;
 }
 
 .collapsed-stat {

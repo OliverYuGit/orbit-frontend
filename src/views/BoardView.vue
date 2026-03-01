@@ -1,69 +1,66 @@
 <template>
   <div class="board-view">
-    <n-page-header title="Mission Board" style="margin-bottom: 16px;">
-      <template #extra>
-        <n-button 
-          type="primary" 
-          @click="showCreate = true"
-          style="background: #6C63FF; border: none;"
-        >
-          + New Task
-        </n-button>
-      </template>
-    </n-page-header>
+    <n-page-header title="Mission Board" style="margin-bottom: 16px;" />
 
     <div class="board-layout">
       <!-- Left: Board Area -->
       <div class="board-area">
-        <!-- Filter Bar -->
-        <n-space 
+        <!-- Filter Bar with New Task Button -->
+        <div 
           :class="['filter-bar', { 'filter-active': hasActiveFilters }]"
-          style="margin: 16px 0; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);" 
-          align="center" 
-          wrap
+          style="margin: 16px 0; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 12px;"
         >
-          <n-select
-            v-model:value="filters.status"
-            :options="statusOptions"
-            placeholder="Status"
-            clearable
-            multiple
-            style="width: 160px;"
-          />
-          <n-select
-            v-model:value="filters.priority"
-            :options="priorityOptions"
-            placeholder="Priority"
-            clearable
-            multiple
-            style="width: 140px;"
-          />
-          <n-select
-            v-model:value="filters.assigneeId"
-            :options="userOptions"
-            placeholder="Assignee"
-            clearable
-            style="width: 150px;"
-          />
-          <n-input
-            v-model:value="filters.q"
-            placeholder="Search tasks..."
-            clearable
-            style="width: 200px;"
-            @update:value="debouncedFetch"
-          >
-            <template #prefix>
-              <span style="opacity: 0.5;">🔍</span>
-            </template>
-          </n-input>
+          <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
+            <n-select
+              v-model:value="filters.status"
+              :options="statusOptions"
+              placeholder="Status"
+              clearable
+              multiple
+              style="width: 160px;"
+            />
+            <n-select
+              v-model:value="filters.priority"
+              :options="priorityOptions"
+              placeholder="Priority"
+              clearable
+              multiple
+              style="width: 140px;"
+            />
+            <n-select
+              v-model:value="filters.assigneeId"
+              :options="userOptions"
+              placeholder="Assignee"
+              clearable
+              style="width: 150px;"
+            />
+            <n-input
+              v-model:value="filters.q"
+              placeholder="Search tasks..."
+              clearable
+              style="width: 200px;"
+              @update:value="debouncedFetch"
+            >
+              <template #prefix>
+                <span style="opacity: 0.5;">🔍</span>
+              </template>
+            </n-input>
+            <n-button 
+              @click="resetFilters"
+              :type="hasActiveFilters ? 'warning' : 'default'"
+              ghost
+            >
+              Reset
+            </n-button>
+          </div>
           <n-button 
-            @click="resetFilters"
-            :type="hasActiveFilters ? 'warning' : 'default'"
-            ghost
+            type="primary" 
+            @click="showCreate = true"
+            style="background: #6C63FF; border: none; margin-left: auto;"
           >
-            Reset
+            + New Task
           </n-button>
-        </n-space>
+        </div>
 
         <!-- Board Columns -->
         <div class="board-columns">
@@ -90,7 +87,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { NPageHeader, NButton, NSpace, NSelect, NInput, useMessage } from 'naive-ui'
+import { NPageHeader, NButton, NSelect, NInput, useMessage } from 'naive-ui'
 import { useTaskStore } from '@/stores/tasks'
 import { userApi } from '@/api'
 import BoardColumn from '@/components/board/BoardColumn.vue'

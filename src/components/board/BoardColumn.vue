@@ -6,7 +6,8 @@
       minWidth: '300px', 
       flexShrink: 0,
       background: columnBgColor,
-      borderRadius: '16px'
+      borderRadius: '16px',
+      border: `2px solid ${columnBorderColor}`
     }"
     @drop="handleDrop"
     @dragover.prevent="handleDragOver"
@@ -55,11 +56,11 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
   BACKLOG: 'Backlog', TODO: 'Todo', DOING: 'Doing', DONE: 'Done'
 }
 
-const STATUS_COLORS: Record<TaskStatus, { bg: string; dot: string; text: string }> = {
-  BACKLOG: { bg: '#F7F8FA', dot: '#C9CDD4', text: '#646A73' },
-  TODO: { bg: '#FFF7E8', dot: '#FF9A2E', text: '#7D4E00' },
-  DOING: { bg: '#EEF3FF', dot: '#2F6FED', text: '#1D4ED8' },
-  DONE: { bg: '#F0FFF4', dot: '#00B42A', text: '#15803D' }
+const STATUS_COLORS: Record<TaskStatus, { bg: string; dot: string; text: string; border: string }> = {
+  BACKLOG: { bg: 'rgba(201, 205, 212, 0.1)', dot: '#C9CDD4', text: '#C9CDD4', border: 'rgba(201, 205, 212, 0.3)' },
+  TODO: { bg: 'rgba(255, 154, 46, 0.1)', dot: '#FF9A2E', text: '#FF9A2E', border: 'rgba(255, 154, 46, 0.3)' },
+  DOING: { bg: 'rgba(47, 111, 237, 0.1)', dot: '#2F6FED', text: '#2F6FED', border: 'rgba(47, 111, 237, 0.3)' },
+  DONE: { bg: 'rgba(0, 180, 42, 0.1)', dot: '#00B42A', text: '#00B42A', border: 'rgba(0, 180, 42, 0.3)' }
 }
 
 const props = defineProps<{ status: TaskStatus; tasks: Task[] }>()
@@ -71,6 +72,7 @@ const emit = defineEmits<{
 const isDragOver = ref(false)
 
 const columnBgColor = computed(() => STATUS_COLORS[props.status].bg)
+const columnBorderColor = computed(() => STATUS_COLORS[props.status].border)
 const statusColor = computed(() => STATUS_COLORS[props.status].dot)
 const statusTextColor = computed(() => STATUS_COLORS[props.status].text)
 
