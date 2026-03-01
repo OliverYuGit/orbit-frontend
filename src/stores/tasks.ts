@@ -11,7 +11,7 @@ export const useTaskStore = defineStore('tasks', () => {
     loading.value = true
     try {
       const res = await taskApi.list({ pageSize: 200, ...params })
-      tasks.value = res.data.items
+      tasks.value = res.data.data.items
     } finally {
       loading.value = false
     }
@@ -26,7 +26,7 @@ export const useTaskStore = defineStore('tasks', () => {
       const res = await taskApi.transition(id, toStatus)
       // sync with server response
       const idx = tasks.value.findIndex(t => t.id === id)
-      if (idx !== -1) tasks.value[idx] = res.data
+      if (idx !== -1) tasks.value[idx] = res.data.data
     } catch {
       task.status = prev // rollback
       throw new Error('Failed to update status')
@@ -35,15 +35,15 @@ export const useTaskStore = defineStore('tasks', () => {
 
   async function createTask(data: Partial<Task>) {
     const res = await taskApi.create(data)
-    tasks.value.push(res.data)
-    return res.data
+    tasks.value.push(res.data.data)
+    return res.data.data
   }
 
   async function updateTask(id: number, data: Partial<Task>) {
     const res = await taskApi.update(id, data)
     const idx = tasks.value.findIndex(t => t.id === id)
-    if (idx !== -1) tasks.value[idx] = res.data
-    return res.data
+    if (idx !== -1) tasks.value[idx] = res.data.data
+    return res.data.data
   }
 
   return { tasks, loading, fetchTasks, updateTaskStatus, createTask, updateTask }

@@ -151,7 +151,7 @@ async function loadDashboardData() {
   try {
     // Load recent activities
     const response = await activityApi.list({ page: 1, pageSize: 10 })
-    activities.value = response.data.items || []
+    activities.value = response.data.data.items || []
 
     // Calculate stats from activities
     calculateStats()

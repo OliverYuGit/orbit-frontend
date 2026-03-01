@@ -37,7 +37,7 @@ onMounted(async () => {
   loading.value = true
   try {
     const res = await activityApi.list({ pageSize: 50 })
-    activities.value = res.data.items
+    activities.value = res.data.data.items
   } finally {
     loading.value = false
   }

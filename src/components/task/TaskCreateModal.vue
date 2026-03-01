@@ -73,6 +73,6 @@ async function handleSubmit() {
 
 onMounted(async () => {
   const res = await userApi.list()
-  users.value = res.data.items
+  users.value = res.data.data.items
 })
 </script>

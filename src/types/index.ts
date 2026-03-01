@@ -1,6 +1,15 @@
 export type TaskStatus = 'BACKLOG' | 'TODO' | 'DOING' | 'DONE'
 export type TaskPriority = 'P0' | 'P1' | 'P2'
 
+export interface ApiResponse<T> {
+  success: boolean
+  data: T
+  error?: {
+    code: string
+    message: string
+  }
+}
+
 export interface User {
   id: number
   username: string

@@ -11,16 +11,16 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(username: string, password: string) {
     const res = await authApi.login(username, password)
-    token.value = res.data.accessToken
-    user.value = res.data.user
-    localStorage.setItem('token', res.data.accessToken)
+    token.value = res.data.data.accessToken
+    user.value = res.data.data.user
+    localStorage.setItem('token', res.data.data.accessToken)
   }
 
   async function fetchMe() {
     if (!token.value) return
     try {
       const res = await authApi.me()
-      user.value = res.data
+      user.value = res.data.data
     } catch {
       // token invalid, will be caught by 401 interceptor
     }

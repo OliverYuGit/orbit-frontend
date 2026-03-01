@@ -104,6 +104,6 @@ async function handleMove(taskId: number, newStatus: TaskStatus) {
 onMounted(async () => {
   taskStore.fetchTasks()
   const res = await userApi.list()
-  users.value = res.data.items
+  users.value = res.data.data.items
 })
 </script>

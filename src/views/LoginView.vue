@@ -147,13 +147,15 @@ async function handleLogin() {
     loading.value = true
     
     await auth.login(form.value.username, form.value.password)
-    router.push('/app/board')
+    // Login successful, redirect to dashboard
+    await router.push('/app/dashboard')
   } catch (err: any) {
     if (err?.message) {
       // Validation error
       return
     }
-    error.value = 'Invalid credentials or network error.'
+    console.error('Login error:', err)
+    error.value = err?.response?.data?.error?.message || 'Invalid credentials or network error.'
   } finally {
     loading.value = false
   }

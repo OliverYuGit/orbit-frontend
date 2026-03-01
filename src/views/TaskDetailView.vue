@@ -143,7 +143,7 @@ async function saveFields(data: Partial<Task>) {
   if (!task.value) return
   try {
     const res = await taskApi.update(task.value.id, data)
-    Object.assign(task.value, res.data)
+    Object.assign(task.value, res.data.data)
   } catch {
     message.error('Failed to save changes')
   }
@@ -154,7 +154,7 @@ async function handleStatusChange(toStatus: TaskStatus) {
   const prev = task.value.status
   try {
     const res = await taskApi.transition(task.value.id, toStatus)
-    Object.assign(task.value, res.data)
+    Object.assign(task.value, res.data.data)
     await refreshActivities()
   } catch {
     task.value.status = prev
@@ -166,7 +166,7 @@ async function handleAssigneeChange(assigneeId: number | null) {
   if (!task.value) return
   try {
     const res = await taskApi.assign(task.value.id, assigneeId)
-    Object.assign(task.value, res.data)
+    Object.assign(task.value, res.data.data)
     await refreshActivities()
   } catch {
     message.error('Failed to update assignee')
@@ -180,7 +180,7 @@ async function submitComment() {
     await commentApi.create(task.value.id, newComment.value)
     newComment.value = ''
     const res = await commentApi.list(task.value.id)
-    comments.value = res.data.items
+    comments.value = res.data.data.items
     await refreshActivities()
   } catch {
     message.error('Failed to post comment')
@@ -192,7 +192,7 @@ async function submitComment() {
 async function refreshActivities() {
   if (!task.value) return
   const res = await activityApi.list({ taskId: task.value.id })
-  activities.value = res.data.items
+  activities.value = res.data.data.items
 }
 
 onMounted(async () => {
@@ -203,9 +203,9 @@ onMounted(async () => {
     activityApi.list({ taskId: id }),
     userApi.list(),
   ])
-  task.value = t.data
-  comments.value = c.data.items
-  activities.value = a.data.items
-  users.value = u.data.items
+  task.value = t.data.data
+  comments.value = c.data.data.items
+  activities.value = a.data.data.items
+  users.value = u.data.data.items
 })
 </script>
