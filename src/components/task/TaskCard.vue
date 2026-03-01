@@ -1,20 +1,20 @@
 <template>
   <n-card
-    :class="['task-card', { 'is-dragging': isDragging, 'drag-ghost': isDragging }]"
+    :class="['task-card', { 'is-dragging': isDragging }]"
     size="small"
     hoverable
+    draggable="true"
     :style="{ 
       cursor: isDragging ? 'grabbing' : 'grab',
       borderRadius: '8px',
       background: 'rgba(255, 255, 255, 0.05)',
       border: '1px solid rgba(255, 255, 255, 0.1)',
       opacity: isDragging ? 0.5 : 1,
-      transform: isDragging ? 'rotate(2deg) scale(1.02)' : 'none',
       transition: 'all 0.2s ease'
     }"
     @click="$emit('click')"
-    @mousedown="handleMouseDown"
-    @mouseup="handleMouseUp"
+    @dragstart="handleDragStart"
+    @dragend="handleDragEnd"
   >
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
       <n-ellipsis style="font-size: 14px; font-weight: 500; flex: 1; color: var(--text-primary);">
@@ -76,7 +76,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useDraggable } from '@dnd-kit/core'
 import { NCard, NEllipsis, NTag, NButton, NDropdown } from 'naive-ui'
 import type { Task, TaskStatus } from '@/types'
 
@@ -88,8 +87,6 @@ const props = defineProps<{
 const emit = defineEmits<{ 
   click: []; 
   move: [status: TaskStatus];
-  'drag-start': [taskId: number];
-  'drag-end': [];
 }>()
 
 const STATUSES: TaskStatus[] = ['BACKLOG', 'TODO', 'DOING', 'DONE']
@@ -113,28 +110,18 @@ const priorityType = computed(() => ({
   P2: 'default'
 }[props.task.priority] as 'error' | 'warning' | 'default'))
 
-const isDraggingLocal = ref(false)
+const isDragging = ref(false)
 
-// useDraggable hook (not currently used but kept for future drag functionality)
-useDraggable({
-  id: `task-${props.task.id}`,
-  data: { task: props.task }
-})
-
-function handleMouseDown(e: MouseEvent) {
-  // Only start drag if not clicking on dropdown or button
-  const target = e.target as HTMLElement
-  if (!target.closest('.n-dropdown') && !target.closest('.n-button')) {
-    isDraggingLocal.value = true
-    emit('drag-start', props.task.id)
+function handleDragStart(e: DragEvent) {
+  isDragging.value = true
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('taskId', props.task.id.toString())
   }
 }
 
-function handleMouseUp() {
-  if (isDraggingLocal.value) {
-    isDraggingLocal.value = false
-    emit('drag-end')
-  }
+function handleDragEnd() {
+  isDragging.value = false
 }
 </script>
 

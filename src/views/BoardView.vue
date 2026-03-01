@@ -65,40 +65,17 @@
           </n-button>
         </n-space>
 
-        <!-- Board Columns with DnD -->
-        <DndContext
-          :sensors="sensors"
-          :collision-detection="closestCorners"
-          @drag-start="handleDragStart"
-          @drag-over="handleDragOver"
-          @drag-end="handleDragEnd"
-        >
-          <div class="board-columns">
-            <SortableContext
-              v-for="status in STATUSES"
-              :key="status"
-              :items="tasksByStatus(status).map(t => `task-${t.id}`)"
-              :strategy="verticalListSortingStrategy"
-            >
-              <BoardColumn
-                :status="status"
-                :tasks="tasksByStatus(status)"
-                @move="handleMove"
-                @click-task="openTask"
-              />
-            </SortableContext>
-          </div>
-
-          <!-- Drag Overlay -->
-          <DragOverlay>
-            <TaskCard
-              v-if="activeTask"
-              :task="activeTask"
-              :is-dragging="true"
-              style="cursor: grabbing; transform: rotate(2deg) scale(1.02);"
-            />
-          </DragOverlay>
-        </DndContext>
+        <!-- Board Columns -->
+        <div class="board-columns">
+          <BoardColumn
+            v-for="status in STATUSES"
+            :key="status"
+            :status="status"
+            :tasks="tasksByStatus(status)"
+            @move="handleMove"
+            @click-task="openTask"
+          />
+        </div>
       </div>
 
       <!-- Right: Live Activity Panel -->
@@ -113,27 +90,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { 
-  DndContext, 
-  DragOverlay,
-  closestCorners,
-  PointerSensor,
-  KeyboardSensor,
-  useSensor,
-  useSensors
-} from '@dnd-kit/core'
-import { 
-  SortableContext,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable'
 import { NPageHeader, NButton, NSpace, NSelect, NInput, useMessage } from 'naive-ui'
 import { useTaskStore } from '@/stores/tasks'
 import { userApi } from '@/api'
 import BoardColumn from '@/components/board/BoardColumn.vue'
-import TaskCard from '@/components/task/TaskCard.vue'
 import TaskCreateModal from '@/components/task/TaskCreateModal.vue'
 import LiveActivity from '@/components/board/LiveActivity.vue'
-import type { TaskStatus, User, Task } from '@/types'
+import type { TaskStatus, User } from '@/types'
 
 const STATUSES: TaskStatus[] = ['BACKLOG', 'TODO', 'DOING', 'DONE']
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -151,19 +114,6 @@ const filters = ref<{
   assigneeId?: number; 
   q?: string 
 }>({})
-
-const activeTask = ref<Task | null>(null)
-const overId = ref<string | null>(null)
-
-// DnD sensors
-const sensors = useSensors(
-  useSensor(PointerSensor, {
-    activationConstraint: {
-      distance: 5, // 5px movement to start drag
-    },
-  }),
-  useSensor(KeyboardSensor)
-)
 
 const statusOptions = STATUSES.map(s => ({ label: STATUS_LABELS[s], value: s }))
 const priorityOptions = ['P0', 'P1', 'P2'].map(p => ({ label: p, value: p }))
@@ -220,45 +170,12 @@ function openTask(id: number) {
 }
 
 async function handleMove(taskId: number, newStatus: TaskStatus) {
-  await taskStore.updateTaskStatus(taskId, newStatus)
-}
-
-function handleDragStart(event: any) {
-  const taskId = parseInt(event.active.id.toString().replace('task-', ''))
-  activeTask.value = taskStore.tasks.find(t => t.id === taskId) || null
-}
-
-function handleDragOver(event: any) {
-  overId.value = event.over?.id || null
-}
-
-async function handleDragEnd(event: any) {
-  const { over } = event
-  
-  if (!over || !activeTask.value) {
-    activeTask.value = null
-    overId.value = null
-    return
+  try {
+    await taskStore.updateTaskStatus(taskId, newStatus)
+    message.success(`Task moved to ${STATUS_LABELS[newStatus]}`)
+  } catch (error) {
+    message.error('Failed to move task')
   }
-
-  // Extract status from column id
-  const overColumnId = over.id.toString()
-  if (overColumnId.startsWith('column-')) {
-    const newStatus = overColumnId.replace('column-', '') as TaskStatus
-    const taskId = activeTask.value.id
-    
-    if (activeTask.value.status !== newStatus) {
-      try {
-        await taskStore.updateTaskStatus(taskId, newStatus)
-        message.success(`Task moved to ${STATUS_LABELS[newStatus]}`)
-      } catch (error) {
-        message.error('Failed to move task')
-      }
-    }
-  }
-
-  activeTask.value = null
-  overId.value = null
 }
 
 async function handleTaskCreated() {

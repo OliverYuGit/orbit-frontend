@@ -8,6 +8,9 @@
       background: columnBgColor,
       borderRadius: '16px'
     }"
+    @drop="handleDrop"
+    @dragover.prevent="handleDragOver"
+    @dragleave="handleDragLeave"
   >
     <template #header>
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -28,18 +31,14 @@
     </template>
     <n-scrollbar style="max-height: calc(100vh - 260px);">
       <div 
-        ref="dropZoneRef"
         style="display: flex; flex-direction: column; gap: 8px; padding: 4px 0; min-height: 100px;"
       >
         <TaskCard
           v-for="task in tasks"
           :key="task.id"
           :task="task"
-          :is-dragging="draggingTaskId === task.id"
           @click="$emit('click-task', task.id)"
           @move="(newStatus) => $emit('move', task.id, newStatus)"
-          @drag-start="handleDragStart(task.id)"
-          @drag-end="handleDragEnd"
         />
       </div>
     </n-scrollbar>
@@ -48,7 +47,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useDroppable } from '@dnd-kit/core'
 import { NCard, NTag, NScrollbar } from 'naive-ui'
 import TaskCard from '@/components/task/TaskCard.vue'
 import type { Task, TaskStatus } from '@/types'
@@ -68,34 +66,31 @@ const props = defineProps<{ status: TaskStatus; tasks: Task[] }>()
 const emit = defineEmits<{ 
   'click-task': [id: number]; 
   move: [taskId: number, status: TaskStatus];
-  'drop': [taskId: number, status: TaskStatus];
 }>()
 
-const draggingTaskId = ref<number | null>(null)
 const isDragOver = ref(false)
 
 const columnBgColor = computed(() => STATUS_COLORS[props.status].bg)
 const statusColor = computed(() => STATUS_COLORS[props.status].dot)
 const statusTextColor = computed(() => STATUS_COLORS[props.status].text)
 
-const dropZoneRef = ref<HTMLElement>()
-const { setNodeRef } = useDroppable({
-  id: `column-${props.status}`,
-  data: { status: props.status }
-})
-
-function handleDragStart(taskId: number) {
-  draggingTaskId.value = taskId
+function handleDragOver(e: DragEvent) {
+  e.preventDefault()
+  isDragOver.value = true
 }
 
-function handleDragEnd() {
-  draggingTaskId.value = null
+function handleDragLeave() {
   isDragOver.value = false
 }
 
-// Set the drop zone ref
-if (dropZoneRef.value) {
-  setNodeRef(dropZoneRef.value)
+function handleDrop(e: DragEvent) {
+  e.preventDefault()
+  isDragOver.value = false
+  
+  const taskId = e.dataTransfer?.getData('taskId')
+  if (taskId) {
+    emit('move', parseInt(taskId), props.status)
+  }
 }
 </script>
 
