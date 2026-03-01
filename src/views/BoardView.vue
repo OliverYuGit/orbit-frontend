@@ -220,7 +220,7 @@ onMounted(async () => {
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  padding-bottom: 16px;
+  padding: 24px;
   flex: 1;
   min-height: 0;
 }
