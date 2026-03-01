@@ -1,6 +1,6 @@
 <template>
   <div class="board-view">
-    <n-page-header title="Mission Board" style="margin-bottom: 16px; padding-left: 24px;" />
+    <n-page-header title="Mission Board" style="margin-bottom: 16px; padding-left: 24px; display: flex; align-items: center;" />
 
     <div class="board-layout">
       <!-- Left: Board Area -->
@@ -8,7 +8,7 @@
         <!-- Filter Bar with New Task Button -->
         <div 
           :class="['filter-bar', { 'filter-active': hasActiveFilters }]"
-          style="margin: 16px 0; padding: 12px 12px 12px 24px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 12px;"
+          style="margin: 16px 0; padding: 12px 12px 12px 32px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 12px;"
         >
           <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
             <n-select
@@ -42,7 +42,7 @@
               @update:value="debouncedFetch"
             >
               <template #prefix>
-                <span style="opacity: 0.5;">🔍</span>
+                <n-icon :component="SearchOutline" style="opacity: 0.5;" />
               </template>
             </n-input>
             <n-button 
@@ -87,7 +87,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { NPageHeader, NButton, NSelect, NInput, useMessage } from 'naive-ui'
+import { NPageHeader, NButton, NSelect, NInput, NIcon, useMessage } from 'naive-ui'
+import { SearchOutline } from '@vicons/ionicons5'
 import { useTaskStore } from '@/stores/tasks'
 import { userApi } from '@/api'
 import BoardColumn from '@/components/board/BoardColumn.vue'
@@ -220,7 +221,7 @@ onMounted(async () => {
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  padding: 24px;
+  padding: 12px 24px 24px 24px;
   flex: 1;
   min-height: 0;
 }
