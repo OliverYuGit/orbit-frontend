@@ -76,7 +76,7 @@
               />
             </n-form-item>
             <n-form-item label="Tags">
-              <n-dynamic-tags v-model:value="task.tags" @update:value="v => saveFields({ tags: v })" />
+              <n-dynamic-tags v-model:value="task.tags" @update:value="(v: string[]) => saveFields({ tags: v })" />
             </n-form-item>
             <n-form-item label="Created by">
               <span style="font-size: 14px; color: #646A73;">
