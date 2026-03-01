@@ -43,13 +43,13 @@
         <!-- Form -->
         <n-form ref="formRef" :model="form" :rules="rules" :show-label="false" @submit.prevent="handleLogin">
           <div class="input-group">
-            <label class="input-label">Email</label>
-            <n-form-item path="email">
+            <label class="input-label">Username</label>
+            <n-form-item path="username">
               <input
-                v-model="form.email"
-                type="email"
+                v-model="form.username"
+                type="text"
                 class="input-field"
-                placeholder="you@orbit.local"
+                placeholder="Enter your username"
               />
             </n-form-item>
           </div>
@@ -126,14 +126,13 @@ const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
 const error = ref('')
 const form = ref({
-  email: '',
+  username: '',
   password: ''
 })
 
 const rules: FormRules = {
-  email: [
-    { required: true, message: 'Please enter your email', trigger: 'blur' },
-    { type: 'email', message: 'Please enter a valid email', trigger: 'blur' }
+  username: [
+    { required: true, message: 'Please enter your username', trigger: 'blur' }
   ],
   password: [
     { required: true, message: 'Please enter your password', trigger: 'blur' }
@@ -147,7 +146,7 @@ async function handleLogin() {
     await formRef.value?.validate()
     loading.value = true
     
-    await auth.login(form.value.email, form.value.password)
+    await auth.login(form.value.username, form.value.password)
     router.push('/app/board')
   } catch (err: any) {
     if (err?.message) {
@@ -543,6 +542,70 @@ function getStarStyle(index: number) {
   }
 }
 
+@media (max-width: 768px) {
+  .login-page {
+    align-items: flex-start;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+    padding: 20px 16px;
+    gap: 24px;
+    max-width: 100%;
+  }
+
+  .login-form-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 40px 24px;
+    order: 1;
+  }
+
+  .showcase-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    order: 2;
+  }
+
+  .feature-card {
+    padding: 24px;
+    height: auto;
+    min-height: 200px;
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+
+  .card-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .glow-orb {
+    filter: blur(60px);
+    opacity: 0.4;
+  }
+
+  .glow-1 {
+    width: 300px;
+    height: 300px;
+  }
+
+  .glow-2 {
+    width: 350px;
+    height: 350px;
+  }
+
+  .glow-3 {
+    width: 250px;
+    height: 250px;
+  }
+}
+
 @media (max-width: 640px) {
   .login-form-container {
     padding: 40px 30px;
@@ -566,6 +629,48 @@ function getStarStyle(index: number) {
 
   .card-description {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form-container {
+    padding: 32px 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+
+  .input-field {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .login-button {
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .feature-card {
+    padding: 24px 20px;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
+  .card-description {
+    font-size: 13px;
   }
 }
 
