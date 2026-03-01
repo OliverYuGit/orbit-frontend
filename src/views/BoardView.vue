@@ -184,7 +184,7 @@ async function handleTaskCreated() {
 onMounted(async () => {
   taskStore.fetchTasks()
   const res = await userApi.list()
-  users.value = res.data.data.items
+  users.value = res.data.items
 })
 </script>
 
