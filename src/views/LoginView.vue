@@ -75,10 +75,7 @@
           </button>
         </n-form>
 
-        <!-- Footer Links -->
-        <div class="footer-links">
-          Don't have an account? <a href="#">Sign up</a>
-        </div>
+
       </div>
 
       <!-- Right: Showcase -->
