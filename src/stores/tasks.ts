@@ -10,20 +10,23 @@ export const useTaskStore = defineStore('tasks', () => {
   async function fetchTasks(params?: FilterParams) {
     loading.value = true
     try {
-      const res = await taskApi.list(params)
-      tasks.value = res.data
+      const res = await taskApi.list({ pageSize: 200, ...params })
+      tasks.value = res.data.items
     } finally {
       loading.value = false
     }
   }
 
-  async function updateTaskStatus(id: number, status: Task['status']) {
+  async function updateTaskStatus(id: number, toStatus: Task['status']) {
     const task = tasks.value.find(t => t.id === id)
     if (!task) return
     const prev = task.status
-    task.status = status // optimistic
+    task.status = toStatus // optimistic
     try {
-      await taskApi.update(id, { status })
+      const res = await taskApi.transition(id, toStatus)
+      // sync with server response
+      const idx = tasks.value.findIndex(t => t.id === id)
+      if (idx !== -1) tasks.value[idx] = res.data
     } catch {
       task.status = prev // rollback
       throw new Error('Failed to update status')
@@ -36,5 +39,12 @@ export const useTaskStore = defineStore('tasks', () => {
     return res.data
   }
 
-  return { tasks, loading, fetchTasks, updateTaskStatus, createTask }
+  async function updateTask(id: number, data: Partial<Task>) {
+    const res = await taskApi.update(id, data)
+    const idx = tasks.value.findIndex(t => t.id === id)
+    if (idx !== -1) tasks.value[idx] = res.data
+    return res.data
+  }
+
+  return { tasks, loading, fetchTasks, updateTaskStatus, createTask, updateTask }
 })

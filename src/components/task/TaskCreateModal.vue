@@ -7,11 +7,19 @@
       <n-form-item label="Priority">
         <n-select v-model:value="form.priority" :options="priorityOptions" />
       </n-form-item>
-      <n-form-item label="Status">
-        <n-select v-model:value="form.status" :options="statusOptions" />
+      <n-form-item label="Assignee">
+        <n-select
+          v-model:value="form.assigneeId"
+          :options="userOptions"
+          placeholder="Unassigned"
+          clearable
+        />
+      </n-form-item>
+      <n-form-item label="Tags">
+        <n-dynamic-tags v-model:value="form.tags" />
       </n-form-item>
       <n-form-item label="Description">
-        <n-input v-model:value="form.desc" type="textarea" :rows="3" placeholder="Optional description" />
+        <n-input v-model:value="form.description" type="textarea" :rows="3" placeholder="Optional description" />
       </n-form-item>
       <div style="display: flex; justify-content: flex-end; gap: 8px;">
         <n-button @click="show = false">Cancel</n-button>
@@ -22,30 +30,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { NModal, NForm, NFormItem, NInput, NSelect, NButton } from 'naive-ui'
+import { ref, onMounted, computed } from 'vue'
+import { NModal, NForm, NFormItem, NInput, NSelect, NButton, NDynamicTags } from 'naive-ui'
 import { useTaskStore } from '@/stores/tasks'
-import type { TaskStatus, TaskPriority } from '@/types'
+import { userApi } from '@/api'
+import type { TaskPriority, User } from '@/types'
 
 const show = defineModel<boolean>('show')
 const emit = defineEmits<{ created: [] }>()
 const taskStore = useTaskStore()
 const loading = ref(false)
-const form = ref({ title: '', priority: 'P2' as TaskPriority, status: 'Backlog' as TaskStatus, desc: '' })
+const users = ref<User[]>([])
+const form = ref({
+  title: '',
+  priority: 'P2' as TaskPriority,
+  assigneeId: null as number | null,
+  tags: [] as string[],
+  description: '',
+})
 
 const priorityOptions = ['P0', 'P1', 'P2'].map(p => ({ label: p, value: p }))
-const statusOptions = ['Backlog', 'Todo', 'Doing', 'Done'].map(s => ({ label: s, value: s }))
+const userOptions = computed(() => users.value.map(u => ({ label: u.displayName || u.username, value: u.id })))
 
 async function handleSubmit() {
   if (!form.value.title.trim()) return
   loading.value = true
   try {
-    await taskStore.createTask(form.value)
+    await taskStore.createTask({
+      title: form.value.title,
+      priority: form.value.priority,
+      assigneeId: form.value.assigneeId ?? undefined,
+      tags: form.value.tags,
+      description: form.value.description || undefined,
+    })
     show.value = false
     emit('created')
-    form.value = { title: '', priority: 'P2', status: 'Backlog', desc: '' }
+    form.value = { title: '', priority: 'P2', assigneeId: null, tags: [], description: '' }
   } finally {
     loading.value = false
   }
 }
+
+onMounted(async () => {
+  const res = await userApi.list()
+  users.value = res.data.items
+})
 </script>

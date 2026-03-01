@@ -1,46 +1,62 @@
-export type TaskStatus = 'Backlog' | 'Todo' | 'Doing' | 'Done'
+export type TaskStatus = 'BACKLOG' | 'TODO' | 'DOING' | 'DONE'
 export type TaskPriority = 'P0' | 'P1' | 'P2'
 
 export interface User {
   id: number
   username: string
+  displayName: string
+  avatarUrl?: string | null
 }
 
 export interface Task {
   id: number
   title: string
-  desc?: string
+  description?: string
   status: TaskStatus
   priority: TaskPriority
-  assignee?: User
-  created_by: User
+  assigneeId?: number | null
+  assignee?: User | null
+  createdById: number
+  createdBy?: User
   tags: string[]
   source?: string
-  created_at: string
-  updated_at: string
+  dueAt?: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Comment {
   id: number
-  task_id: number
+  taskId: number
   author: User
   content: string
-  created_at: string
+  createdAt: string
 }
 
 export interface Activity {
   id: number
+  taskId: number
   actor: User
-  action: string
-  target: string
-  task_id: number
-  created_at: string
+  type: string
+  summary: string
+  payload?: Record<string, unknown>
+  createdAt: string
+}
+
+export interface PaginatedResponse<T> {
+  total?: number
+  page?: number
+  pageSize?: number
+  items: T[]
 }
 
 export interface FilterParams {
-  assignee?: number
+  assigneeId?: number
   priority?: TaskPriority
-  status?: TaskStatus
-  tags?: string[]
-  search?: string
+  status?: string
+  tag?: string
+  q?: string
+  page?: number
+  pageSize?: number
+  sort?: string
 }

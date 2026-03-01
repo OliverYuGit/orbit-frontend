@@ -1,5 +1,5 @@
 <template>
-  <n-card :title="status" style="width: 300px; min-width: 300px; flex-shrink: 0;">
+  <n-card :title="STATUS_LABELS[status]" style="width: 300px; min-width: 300px; flex-shrink: 0;">
     <template #header-extra>
       <n-tag size="small">{{ tasks.length }}</n-tag>
     </template>
@@ -21,6 +21,10 @@
 import { NCard, NTag, NScrollbar } from 'naive-ui'
 import TaskCard from '@/components/task/TaskCard.vue'
 import type { Task, TaskStatus } from '@/types'
+
+const STATUS_LABELS: Record<TaskStatus, string> = {
+  BACKLOG: 'Backlog', TODO: 'Todo', DOING: 'Doing', DONE: 'Done'
+}
 
 defineProps<{ status: TaskStatus; tasks: Task[] }>()
 defineEmits<{ 'click-task': [id: number]; move: [taskId: number, status: TaskStatus] }>()

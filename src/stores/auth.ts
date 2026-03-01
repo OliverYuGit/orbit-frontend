@@ -1,18 +1,29 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { authApi } from '@/api'
+import type { User } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
-  const user = ref<{ id: number; username: string } | null>(null)
+  const user = ref<User | null>(null)
 
   const isLoggedIn = () => !!token.value
 
   async function login(username: string, password: string) {
     const res = await authApi.login(username, password)
-    token.value = res.data.token
+    token.value = res.data.accessToken
     user.value = res.data.user
-    localStorage.setItem('token', res.data.token)
+    localStorage.setItem('token', res.data.accessToken)
+  }
+
+  async function fetchMe() {
+    if (!token.value) return
+    try {
+      const res = await authApi.me()
+      user.value = res.data
+    } catch {
+      // token invalid, will be caught by 401 interceptor
+    }
   }
 
   function logout() {
@@ -21,5 +32,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
-  return { token, user, isLoggedIn, login, logout }
+  return { token, user, isLoggedIn, login, logout, fetchMe }
 })
