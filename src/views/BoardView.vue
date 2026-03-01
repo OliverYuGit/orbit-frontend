@@ -1,6 +1,6 @@
 <template>
   <div class="board-view">
-    <n-page-header title="Mission Board" style="margin-bottom: 16px; padding-left: 24px; display: flex; align-items: center;" />
+    <n-page-header title="Mission Board" style="padding-top: 12px; padding-left: 24px; display: flex; align-items: center;" />
 
     <div class="board-layout">
       <!-- Left: Board Area -->
