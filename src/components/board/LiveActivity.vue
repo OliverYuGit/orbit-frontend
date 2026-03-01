@@ -156,10 +156,7 @@ taskStore.$subscribe(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: fit-content;
-  position: sticky;
-  top: 0;
-  max-height: 100vh;
+  height: 100%;
 }
 
 .live-activity.collapsed {
@@ -233,7 +230,7 @@ taskStore.$subscribe(() => {
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  flex: 1;
   padding-right: 4px;
 }
 
