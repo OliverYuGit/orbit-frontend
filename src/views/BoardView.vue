@@ -12,90 +12,98 @@
       </template>
     </n-page-header>
 
-    <!-- Filter Bar -->
-    <n-space 
-      :class="['filter-bar', { 'filter-active': hasActiveFilters }]"
-      style="margin: 16px 0; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);" 
-      align="center" 
-      wrap
-    >
-      <n-select
-        v-model:value="filters.status"
-        :options="statusOptions"
-        placeholder="Status"
-        clearable
-        multiple
-        style="width: 160px;"
-      />
-      <n-select
-        v-model:value="filters.priority"
-        :options="priorityOptions"
-        placeholder="Priority"
-        clearable
-        multiple
-        style="width: 140px;"
-      />
-      <n-select
-        v-model:value="filters.assigneeId"
-        :options="userOptions"
-        placeholder="Assignee"
-        clearable
-        style="width: 150px;"
-      />
-      <n-input
-        v-model:value="filters.q"
-        placeholder="Search tasks..."
-        clearable
-        style="width: 200px;"
-        @update:value="debouncedFetch"
-      >
-        <template #prefix>
-          <span style="opacity: 0.5;">🔍</span>
-        </template>
-      </n-input>
-      <n-button 
-        @click="resetFilters"
-        :type="hasActiveFilters ? 'warning' : 'default'"
-        ghost
-      >
-        Reset
-      </n-button>
-    </n-space>
-
-    <!-- Board Columns with DnD -->
-    <DndContext
-      :sensors="sensors"
-      :collision-detection="closestCorners"
-      @drag-start="handleDragStart"
-      @drag-over="handleDragOver"
-      @drag-end="handleDragEnd"
-    >
-      <div class="board-columns">
-        <SortableContext
-          v-for="status in STATUSES"
-          :key="status"
-          :items="tasksByStatus(status).map(t => `task-${t.id}`)"
-          :strategy="verticalListSortingStrategy"
+    <div class="board-layout">
+      <!-- Left: Board Area -->
+      <div class="board-area">
+        <!-- Filter Bar -->
+        <n-space 
+          :class="['filter-bar', { 'filter-active': hasActiveFilters }]"
+          style="margin: 16px 0; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);" 
+          align="center" 
+          wrap
         >
-          <BoardColumn
-            :status="status"
-            :tasks="tasksByStatus(status)"
-            @move="handleMove"
-            @click-task="openTask"
+          <n-select
+            v-model:value="filters.status"
+            :options="statusOptions"
+            placeholder="Status"
+            clearable
+            multiple
+            style="width: 160px;"
           />
-        </SortableContext>
+          <n-select
+            v-model:value="filters.priority"
+            :options="priorityOptions"
+            placeholder="Priority"
+            clearable
+            multiple
+            style="width: 140px;"
+          />
+          <n-select
+            v-model:value="filters.assigneeId"
+            :options="userOptions"
+            placeholder="Assignee"
+            clearable
+            style="width: 150px;"
+          />
+          <n-input
+            v-model:value="filters.q"
+            placeholder="Search tasks..."
+            clearable
+            style="width: 200px;"
+            @update:value="debouncedFetch"
+          >
+            <template #prefix>
+              <span style="opacity: 0.5;">🔍</span>
+            </template>
+          </n-input>
+          <n-button 
+            @click="resetFilters"
+            :type="hasActiveFilters ? 'warning' : 'default'"
+            ghost
+          >
+            Reset
+          </n-button>
+        </n-space>
+
+        <!-- Board Columns with DnD -->
+        <DndContext
+          :sensors="sensors"
+          :collision-detection="closestCorners"
+          @drag-start="handleDragStart"
+          @drag-over="handleDragOver"
+          @drag-end="handleDragEnd"
+        >
+          <div class="board-columns">
+            <SortableContext
+              v-for="status in STATUSES"
+              :key="status"
+              :items="tasksByStatus(status).map(t => `task-${t.id}`)"
+              :strategy="verticalListSortingStrategy"
+            >
+              <BoardColumn
+                :status="status"
+                :tasks="tasksByStatus(status)"
+                @move="handleMove"
+                @click-task="openTask"
+              />
+            </SortableContext>
+          </div>
+
+          <!-- Drag Overlay -->
+          <DragOverlay>
+            <TaskCard
+              v-if="activeTask"
+              :task="activeTask"
+              :is-dragging="true"
+              style="cursor: grabbing; transform: rotate(2deg) scale(1.02);"
+            />
+          </DragOverlay>
+        </DndContext>
       </div>
 
-      <!-- Drag Overlay -->
-      <DragOverlay>
-        <TaskCard
-          v-if="activeTask"
-          :task="activeTask"
-          :is-dragging="true"
-          style="cursor: grabbing; transform: rotate(2deg) scale(1.02);"
-        />
-      </DragOverlay>
-    </DndContext>
+      <!-- Right: Live Activity Panel -->
+      <LiveActivity />
+    </div>
 
     <!-- Create Task Modal -->
     <TaskCreateModal v-model:show="showCreate" @created="handleTaskCreated" />
@@ -124,6 +132,7 @@ import { userApi } from '@/api'
 import BoardColumn from '@/components/board/BoardColumn.vue'
 import TaskCard from '@/components/task/TaskCard.vue'
 import TaskCreateModal from '@/components/task/TaskCreateModal.vue'
+import LiveActivity from '@/components/board/LiveActivity.vue'
 import type { TaskStatus, User, Task } from '@/types'
 
 const STATUSES: TaskStatus[] = ['BACKLOG', 'TODO', 'DOING', 'DONE']
@@ -224,7 +233,7 @@ function handleDragOver(event: any) {
 }
 
 async function handleDragEnd(event: any) {
-  const { active, over } = event
+  const { over } = event
   
   if (!over || !activeTask.value) {
     activeTask.value = null
@@ -267,10 +276,25 @@ onMounted(async () => {
 <style scoped>
 .board-view {
   padding: 0;
+  height: 100%;
+}
+
+.board-layout {
+  display: flex;
+  gap: 16px;
+  height: calc(100vh - 180px);
+}
+
+.board-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .filter-bar {
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .filter-bar.filter-active {
@@ -283,7 +307,8 @@ onMounted(async () => {
   gap: 16px;
   overflow-x: auto;
   padding-bottom: 16px;
-  min-height: 500px;
+  flex: 1;
+  min-height: 0;
 }
 
 .board-columns::-webkit-scrollbar {
@@ -302,5 +327,16 @@ onMounted(async () => {
 
 .board-columns::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .board-layout {
+    flex-direction: column;
+  }
+  
+  .board-area {
+    height: auto;
+  }
 }
 </style>

@@ -14,7 +14,6 @@ const router = createRouter({
         { path: 'dashboard', component: () => import('@/views/DashboardView.vue') },
         { path: 'board', component: () => import('@/views/BoardView.vue') },
         { path: 'task/:id', component: () => import('@/views/TaskDetailView.vue') },
-        { path: 'activity', component: () => import('@/views/ActivityView.vue') },
         { path: '', redirect: 'dashboard' },
       ],
     },

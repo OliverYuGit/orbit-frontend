@@ -115,7 +115,8 @@ const priorityType = computed(() => ({
 
 const isDraggingLocal = ref(false)
 
-const { attributes, listeners, setNodeRef, transform } = useDraggable({
+// useDraggable hook (not currently used but kept for future drag functionality)
+useDraggable({
   id: `task-${props.task.id}`,
   data: { task: props.task }
 })
