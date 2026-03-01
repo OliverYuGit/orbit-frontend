@@ -1,6 +1,6 @@
 <template>
   <div class="board-view">
-    <n-page-header title="Mission Board" style="margin-bottom: 16px;" />
+    <n-page-header title="Mission Board" style="margin-bottom: 16px; padding-left: 24px;" />
 
     <div class="board-layout">
       <!-- Left: Board Area -->
@@ -8,7 +8,7 @@
         <!-- Filter Bar with New Task Button -->
         <div 
           :class="['filter-bar', { 'filter-active': hasActiveFilters }]"
-          style="margin: 16px 0; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 12px;"
+          style="margin: 16px 0; padding: 12px 12px 12px 24px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 12px;"
         >
           <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
             <n-select
