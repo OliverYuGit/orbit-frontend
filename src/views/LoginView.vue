@@ -190,7 +190,7 @@ function getStarStyle(index: number) {
     { top: '32%', left: '92%', delay: '0.2s' }
   ]
   
-  const pos = positions[index - 1] || positions[0]
+  const pos = positions[index - 1] || positions[0] || { top: '50%', left: '50%', delay: '0s' }
   return {
     top: pos.top,
     left: pos.left,
