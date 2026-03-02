@@ -1,6 +1,8 @@
 import api from './client'
 import type { Task, FilterParams, PaginatedResponse, User, Comment, Activity, ApiResponse } from '@/types'
 
+export { projectApi } from './project'
+
 export const authApi = {
   login: (username: string, password: string) =>
     api.post<ApiResponse<{ accessToken: string; tokenType: string; expiresIn: number; user: User }>>('/auth/login', { username, password }),
@@ -8,7 +10,7 @@ export const authApi = {
 }
 
 export const userApi = {
-  list: (q?: string) => api.get<ApiResponse<{ items: User[] }>>('/users', { params: q ? { q } : undefined }),
+  list: (q?: string) => api.get<{ items: User[] }>('/users', { params: q ? { q } : undefined }),
 }
 
 export const taskApi = {

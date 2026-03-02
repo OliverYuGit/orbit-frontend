@@ -1,5 +1,6 @@
 export type TaskStatus = 'BACKLOG' | 'TODO' | 'DOING' | 'DONE'
 export type TaskPriority = 'P0' | 'P1' | 'P2'
+export type ProjectStatus = 'PLANNING' | 'ACTIVE' | 'PAUSED' | 'COMPLETED'
 
 export interface ApiResponse<T> {
   success: boolean
@@ -17,6 +18,22 @@ export interface User {
   avatarUrl?: string | null
 }
 
+export interface Project {
+  id: number
+  name: string
+  description?: string
+  status: ProjectStatus
+  ownerId: number
+  owner?: User
+  goalId?: number | null
+  deadline?: string | null
+  createdAt: string
+  updatedAt: string
+  taskCount?: number
+  completedTaskCount?: number
+  progress?: number
+}
+
 export interface Task {
   id: number
   title: string
@@ -27,6 +44,8 @@ export interface Task {
   assignee?: User | null
   createdById: number
   createdBy?: User
+  projectId?: number | null
+  project?: Project | null
   tags: string[]
   source?: string
   dueAt?: string | null

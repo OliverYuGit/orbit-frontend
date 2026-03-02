@@ -7,6 +7,14 @@
       <n-form-item label="Priority">
         <n-select v-model:value="form.priority" :options="priorityOptions" />
       </n-form-item>
+      <n-form-item label="Project">
+        <n-select
+          v-model:value="form.projectId"
+          :options="projectOptions"
+          placeholder="No project"
+          clearable
+        />
+      </n-form-item>
       <n-form-item label="Assignee">
         <n-select
           v-model:value="form.assigneeId"
@@ -33,17 +41,20 @@
 import { ref, onMounted, computed } from 'vue'
 import { NModal, NForm, NFormItem, NInput, NSelect, NButton, NDynamicTags } from 'naive-ui'
 import { useTaskStore } from '@/stores/tasks'
+import { useProjectStore } from '@/stores/project'
 import { userApi } from '@/api'
 import type { TaskPriority, User } from '@/types'
 
 const show = defineModel<boolean>('show')
 const emit = defineEmits<{ created: [] }>()
 const taskStore = useTaskStore()
+const projectStore = useProjectStore()
 const loading = ref(false)
 const users = ref<User[]>([])
 const form = ref({
   title: '',
   priority: 'P2' as TaskPriority,
+  projectId: null as number | null,
   assigneeId: null as number | null,
   tags: [] as string[],
   description: '',
@@ -51,6 +62,11 @@ const form = ref({
 
 const priorityOptions = ['P0', 'P1', 'P2'].map(p => ({ label: p, value: p }))
 const userOptions = computed(() => users.value.map(u => ({ label: u.displayName || u.username, value: u.id })))
+const projectOptions = computed(() => 
+  projectStore.projects
+    .filter(p => p.status === 'ACTIVE' || p.status === 'PLANNING')
+    .map(p => ({ label: p.name, value: p.id }))
+)
 
 async function handleSubmit() {
   if (!form.value.title.trim()) return
@@ -59,13 +75,14 @@ async function handleSubmit() {
     await taskStore.createTask({
       title: form.value.title,
       priority: form.value.priority,
+      projectId: form.value.projectId ?? undefined,
       assigneeId: form.value.assigneeId ?? undefined,
       tags: form.value.tags,
       description: form.value.description || undefined,
     })
     show.value = false
     emit('created')
-    form.value = { title: '', priority: 'P2', assigneeId: null, tags: [], description: '' }
+    form.value = { title: '', priority: 'P2', projectId: null, assigneeId: null, tags: [], description: '' }
   } finally {
     loading.value = false
   }
@@ -73,6 +90,7 @@ async function handleSubmit() {
 
 onMounted(async () => {
   const res = await userApi.list()
-  users.value = res.data.data.items
+  users.value = res.data.items
+  await projectStore.fetchProjects()
 })
 </script>
